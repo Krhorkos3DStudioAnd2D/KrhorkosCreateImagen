@@ -1,1 +1,388 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KrhorkosImageEditor v0.1</title>
+    <style>
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --bg-dark: #0f172a;
+            --bg-panel: #1e293b;
+            --text-color: #f8fafc;
+        }
 
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-color);
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* Barra Superior */
+        header {
+            background-color: var(--bg-panel);
+            padding: 15px 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #334155;
+        }
+
+        header h1 {
+            font-size: 1.2rem;
+            color: var(--primary);
+            letter-spacing: 1px;
+        }
+
+        .btn {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: background 0.2s;
+        }
+
+        .btn:hover {
+            background-color: var(--primary-dark);
+        }
+
+        /* Contenedor Principal */
+        .main-container {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+        }
+
+        /* Panel Lateral (Herramientas) */
+        aside {
+            width: 280px;
+            background-color: var(--bg-panel);
+            border-right: 1px solid #334155;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            overflow-y: auto;
+        }
+
+        .tool-section {
+            background: #0f172a;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #334155;
+        }
+
+        .tool-section h3 {
+            font-size: 0.9rem;
+            margin-bottom: 10px;
+            color: #94a3b8;
+            text-transform: uppercase;
+        }
+
+        .tool-section input, .tool-section select {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+            background: #1e293b;
+            border: 1px solid #475569;
+            color: white;
+            border-radius: 4px;
+        }
+
+        .tool-section label {
+            font-size: 0.8rem;
+            color: #cbd5e1;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        /* Área del Lienzo (Canvas Workspace) */
+        .workspace {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: #090d16;
+            position: relative;
+            overflow: auto;
+            padding: 20px;
+        }
+
+        .canvas-container {
+            position: relative;
+            box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.5);
+            background: white;
+        }
+
+        canvas {
+            display: block;
+            cursor: crosshair;
+        }
+
+        .hint {
+            font-size: 0.75rem;
+            color: #64748b;
+            margin-top: 5px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>KrhorkosImageEditor <span style="font-size: 0.8rem; color: #94a3b8;">v0.1</span></h1>
+        <button class="btn" id="downloadBtn">📥 Descargar Imagen</button>
+    </header>
+
+    <div class="main-container">
+        <!-- Panel de Herramientas -->
+        aside>
+            <div class="tool-section">
+                <h3>Fondo</h3>
+                <label>Subir Imagen de Fondo</label>
+                <input type="file" id="imageLoader" accept="image/*">
+                <label>O Color de Fondo</label>
+                <input type="color" id="bgColorPicker" value="#ffffff">
+            </div>
+
+            <div class="tool-section">
+                <h3>Añadir Texto</h3>
+                <input type="text" id="textInput" placeholder="Escribe algo...">
+                <label>Color del Texto</label>
+                <input type="color" id="textColorPicker" value="#000000">
+                <label>Tamaño de Fuente</label>
+                <select id="fontSizeSelect">
+                    <option value="20">Pequeño (20px)</option>
+                    <option value="35" selected>Mediano (35px)</option>
+                    <option value="55">Grande (55px)</option>
+                </select>
+                <button class="btn" id="addTextBtn" style="width: 100%;">Agregar Texto</button>
+            </div>
+
+            <div class="tool-section">
+                <h3>Formas</h3>
+                <button class="btn" id="addRectBtn" style="width: 100%; margin-bottom: 8px;">Agregar Rectángulo</button>
+                <button class="btn" id="addCircleBtn" style="width: 100%;">Agregar Círculo</button>
+            </div>
+            
+            <div class="hint">
+                💡 Tip: Haz clic y arrastra cualquier texto o forma dentro del lienzo para moverlo.
+            </div>
+        </aside>
+
+        <!-- Lienzo -->
+        <div class="workspace">
+            <div class="canvas-container">
+                <canvas id="editorCanvas" width="800" height="500"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('editorCanvas');
+        const ctx = canvas.getContext('2d');
+
+        // Elementos de control
+        const imageLoader = document.getElementById('imageLoader');
+        const bgColorPicker = document.getElementById('bgColorPicker');
+        const textInput = document.getElementById('textInput');
+        const textColorPicker = document.getElementById('textColorPicker');
+        const fontSizeSelect = document.getElementById('fontSizeSelect');
+        const addTextBtn = document.getElementById('addTextBtn');
+        const addRectBtn = document.getElementById('addRectBtn');
+        const addCircleBtn = document.getElementById('addCircleBtn');
+        const downloadBtn = document.getElementById('downloadBtn');
+
+        // Estado del lienzo (Elementos interactivos)
+        let elements = [];
+        let backgroundImage = null;
+        let backgroundColor = "#ffffff";
+
+        let selectedElement = null;
+        let isDragging = false;
+        let startX, startY;
+
+        // Función para redibujar todo el lienzo
+        function drawCanvas() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // 1. Dibujar fondo
+            if (backgroundImage) {
+                ctx.drawImage(backgroundImage, 0, 0, canvas.width, canvas.height);
+            } else {
+                ctx.fillStyle = backgroundColor;
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+            }
+
+            // 2. Dibujar elementos (textos y formas)
+            elements.forEach(el => {
+                ctx.save();
+                if (el.type === 'text') {
+                    ctx.font = `${el.size}px sans-serif`;
+                    ctx.fillStyle = el.color;
+                    ctx.fillText(el.text, el.x, el.y);
+                } else if (el.type === 'rect') {
+                    ctx.fillStyle = el.color;
+                    ctx.fillRect(el.x, el.y, el.width, el.height);
+                } else if (el.type === 'circle') {
+                    ctx.fillStyle = el.color;
+                    ctx.beginPath();
+                    ctx.arc(el.x, el.y, el.radius, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+                ctx.restore();
+            });
+        }
+
+        // Cargar imagen de fondo
+        imageLoader.addEventListener('change', (e) => {
+            const reader = new FileReader();
+            reader.onload = function (event) {
+                const img = new Image();
+                img.onload = function () {
+                    backgroundImage = img;
+                    drawCanvas();
+                }
+                img.src = event.target.result;
+            }
+            reader.readAsDataURL(e.target.files[0]);
+        });
+
+        // Cambiar color de fondo sólido
+        bgColorPicker.addEventListener('input', (e) => {
+            backgroundColor = e.target.value;
+            backgroundImage = null; // Anula la imagen si usa color plano
+            drawCanvas();
+        });
+
+        // Añadir texto
+        addTextBtn.addEventListener('click', () => {
+            const text = textInput.value.trim();
+            if (!text) return;
+
+            elements.push({
+                type: 'text',
+                text: text,
+                x: 50,
+                y: 100,
+                color: textColorPicker.value,
+                size: parseInt(fontSizeSelect.value)
+            });
+            textInput.value = '';
+            drawCanvas();
+        });
+
+        // Añadir rectángulo
+        addRectBtn.addEventListener('click', () => {
+            elements.push({
+                type: 'rect',
+                x: 100,
+                y: 100,
+                width: 150,
+                height: 100,
+                color: '#6366f1'
+            });
+            drawCanvas();
+        });
+
+        // Añadir círculo
+        addCircleBtn.addEventListener('click', () => {
+            elements.push({
+                type: 'circle',
+                x: 150,
+                y: 150,
+                radius: 50,
+                color: '#ec4899'
+            });
+            drawCanvas();
+        });
+
+        // Interactividad del Mouse (Arrastrar elementos)
+        canvas.addEventListener('mousedown', (e) => {
+            const rect = canvas.getBoundingClientRect();
+            const mouseX = e.clientX - rect.left;
+            const mouseY = e.clientY - rect.top;
+
+            // Revisar si se hizo clic en algún elemento (desde el último al primero)
+            for (let i = elements.length - 1; i >= 0; i--) {
+                const el = elements[i];
+                if (el.type === 'text') {
+                    // Detección simple basada en caja de texto aproximada
+                    ctx.font = `${el.size}px sans-serif`;
+                    const metrics = ctx.measureText(el.text);
+                    const width = metrics.width;
+                    const height = el.size;
+                    
+                    if (mouseX >= el.x && mouseX <= el.x + width && mouseY >= el.y - height && mouseY <= el.y) {
+                        selectedElement = el;
+                        isDragging = true;
+                        startX = mouseX - el.x;
+                        startY = mouseY - el.y;
+                        break;
+                    }
+                } else if (el.type === 'rect') {
+                    if (mouseX >= el.x && mouseX <= el.x + el.width && mouseY >= el.y && mouseY <= el.y + el.height) {
+                        selectedElement = el;
+                        isDragging = true;
+                        startX = mouseX - el.x;
+                        startY = mouseY - el.y;
+                        break;
+                    }
+                } else if (el.type === 'circle') {
+                    const distX = mouseX - el.x;
+                    const distY = mouseY - el.y;
+                    if (Math.sqrt(distX * distX + distY * distY) <= el.radius) {
+                        selectedElement = el;
+                        isDragging = true;
+                        startX = mouseX - el.x;
+                        startY = mouseY - el.y;
+                        break;
+                    }
+                }
+            }
+        });
+
+        canvas.addEventListener('mousemove', (e) => {
+            if (isDragging && selectedElement) {
+                const rect = canvas.getBoundingClientRect();
+                const mouseX = e.clientX - rect.left;
+                const mouseY = e.clientY - rect.top;
+
+                selectedElement.x = mouseX - startX;
+                selectedElement.y = mouseY - startY;
+                drawCanvas();
+            }
+        });
+
+        canvas.addEventListener('mouseup', () => {
+            isDragging = false;
+            selectedElement = null;
+        });
+
+        // Descargar Imagen
+        downloadBtn.addEventListener('click', () => {
+            const link = document.createElement('a');
+            link.download = 'krhorkos-creacion.png';
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+        });
+
+        
+        drawCanvas();
+    </script>
+</body>
+</html>
