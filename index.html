@@ -1,388 +1,828 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" data-theme="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>KrhorkosImageEditor v0.1</title>
+    <title>KrhorkosImageEditor</title>
     <style>
-        :root {
-            --primary: #6366f1;
-            --primary-dark: #4f46e5;
-            --bg-dark: #0f172a;
-            --bg-panel: #1e293b;
-            --text-color: #f8fafc;
+        /* --- TEMA Y VARIABLES --- */
+        :root[data-theme="dark"] {
+            --bg-main: #0f1117;
+            --bg-panel: #181b22;
+            --bg-secondary: #21262d;
+            --border-color: #30363d;
+            --text-main: #f0f6fc;
+            --text-muted: #8b949e;
+            --accent: #238636;
+            --accent-hover: #2ea043;
+            --primary-brand: #7928ca;
+            --danger: #da3633;
+        }
+
+        :root[data-theme="light"] {
+            --bg-main: #f0f2f5;
+            --bg-panel: #ffffff;
+            --bg-secondary: #e4e6eb;
+            --border-color: #ccd0d5;
+            --text-main: #050505;
+            --text-muted: #65676b;
+            --accent: #1b74e4;
+            --accent-hover: #1558b0;
+            --primary-brand: #6200ee;
+            --danger: #b00020;
+        }
+
+        :root[data-theme="cyberpunk"] {
+            --bg-main: #05050a;
+            --bg-panel: #0f0e17;
+            --bg-secondary: #1f1b2e;
+            --border-color: #ff007f;
+            --text-main: #00ffff;
+            --text-muted: #a7a9be;
+            --accent: #ff007f;
+            --accent-hover: #ff3399;
+            --primary-brand: #7928ca;
+            --danger: #ff4500;
         }
 
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            user-select: none;
         }
 
         body {
-            background-color: var(--bg-dark);
-            color: var(--text-color);
+            background-color: var(--bg-main);
+            color: var(--text-main);
+            height: 100vh;
             display: flex;
             flex-direction: column;
-            height: 100vh;
             overflow: hidden;
+            transition: background 0.3s, color 0.3s;
         }
 
-        /* Barra Superior */
+        /* --- HEADER / NAVEGACIÓN --- */
         header {
+            height: 60px;
             background-color: var(--bg-panel);
-            padding: 15px 25px;
+            border-bottom: 1px solid var(--border-color);
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border-bottom: 1px solid #334155;
+            padding: 0 20px;
+            z-index: 10;
         }
 
-        header h1 {
+        .brand {
             font-size: 1.2rem;
-            color: var(--primary);
-            letter-spacing: 1px;
+            font-weight: 800;
+            background: linear-gradient(45deg, var(--primary-brand), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: 0.5px;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 12px;
+            align-items: center;
         }
 
         .btn {
-            background-color: var(--primary);
+            background-color: var(--accent);
             color: white;
             border: none;
             padding: 8px 16px;
             border-radius: 6px;
-            cursor: pointer;
             font-weight: 600;
-            transition: background 0.2s;
+            cursor: pointer;
+            transition: background 0.2s, transform 0.1s;
+            font-size: 0.85rem;
         }
 
-        .btn:hover {
-            background-color: var(--primary-dark);
-        }
+        .btn:hover { background-color: var(--accent-hover); }
+        .btn:active { transform: scale(0.97); }
+        .btn-danger { background-color: var(--danger); }
+        .btn-danger:hover { background-color: #b32a28; }
+        .btn-secondary { background-color: var(--bg-secondary); color: var(--text-main); border: 1px solid var(--border-color); }
+        .btn-secondary:hover { background-color: var(--border-color); }
 
-        /* Contenedor Principal */
-        .main-container {
+        /* --- CONTENEDOR PRINCIPAL --- */
+        .main-layout {
             display: flex;
             flex: 1;
             overflow: hidden;
+            position: relative;
         }
 
-        /* Panel Lateral (Herramientas) */
-        aside {
-            width: 280px;
+        /* --- BARRA LATERAL (HERRAMIENTAS Y CAPAS) --- */
+        sidebar {
+            width: 320px;
             background-color: var(--bg-panel);
-            border-right: 1px solid #334155;
-            padding: 20px;
+            border-right: 1px solid var(--border-color);
             display: flex;
             flex-direction: column;
-            gap: 20px;
             overflow-y: auto;
+            z-index: 5;
         }
 
-        .tool-section {
-            background: #0f172a;
-            padding: 15px;
-            border-radius: 8px;
-            border: 1px solid #334155;
+        .sidebar-section {
+            padding: 16px;
+            border-bottom: 1px solid var(--border-color);
         }
 
-        .tool-section h3 {
-            font-size: 0.9rem;
-            margin-bottom: 10px;
-            color: #94a3b8;
+        .sidebar-section h3 {
+            font-size: 0.85rem;
             text-transform: uppercase;
+            color: var(--text-muted);
+            margin-bottom: 12px;
+            letter-spacing: 0.5px;
         }
 
-        .tool-section input, .tool-section select {
+        .control-group {
+            margin-bottom: 10px;
+        }
+
+        .control-group label {
+            display: block;
+            font-size: 0.8rem;
+            margin-bottom: 4px;
+            color: var(--text-main);
+        }
+
+        .control-group select, .control-group input[type="text"], .control-group input[type="number"] {
             width: 100%;
             padding: 8px;
-            margin-bottom: 10px;
-            background: #1e293b;
-            border: 1px solid #475569;
-            color: white;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
             border-radius: 4px;
+            font-size: 0.85rem;
         }
 
-        .tool-section label {
+        .grid-buttons {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px;
+        }
+
+        .layers-list {
+            max-height: 150px;
+            overflow-y: auto;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            padding: 4px;
+        }
+
+        .layer-item {
+            padding: 6px 10px;
             font-size: 0.8rem;
-            color: #cbd5e1;
-            display: block;
-            margin-bottom: 5px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            border-radius: 3px;
+            margin-bottom: 2px;
         }
 
-        /* Área del Lienzo (Canvas Workspace) */
+        .layer-item:hover { background-color: var(--border-color); }
+        .layer-item.active { background-color: var(--accent); color: white; }
+
+        /* --- VIEWPORT CENTRAL --- */
         .workspace {
             flex: 1;
+            background-color: var(--bg-main);
             display: flex;
             justify-content: center;
             align-items: center;
-            background: #090d16;
-            position: relative;
             overflow: auto;
-            padding: 20px;
+            position: relative;
+            padding: 40px;
         }
 
-        .canvas-container {
+        /* Lienzo redimensionable por el usuario */
+        .viewport-wrapper {
             position: relative;
-            box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.5);
-            background: white;
+            resize: both;
+            overflow: hidden;
+            min-width: 300px;
+            min-height: 200px;
+            max-width: 1400px;
+            max-height: 900px;
+            width: 800px;
+            height: 550px;
+            background: #ffffff;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            border: 2px dashed var(--border-color);
         }
 
         canvas {
             display: block;
+            width: 100%;
+            height: 100%;
             cursor: crosshair;
         }
 
-        .hint {
-            font-size: 0.75rem;
-            color: #64748b;
-            margin-top: 5px;
+        /* --- MODALES Y PANELES FLOTANTES --- */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.7);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+            backdrop-filter: blur(3px);
+        }
+
+        .modal-card {
+            background: var(--bg-panel);
+            border: 1px solid var(--border-color);
+            width: 450px;
+            max-width: 90%;
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.6);
+            position: relative;
+            animation: modalPop 0.25s ease-out;
+        }
+
+        @keyframes modalPop {
+            0% { transform: scale(0.9); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .modal-card h2 {
+            font-size: 1.3rem;
+            margin-bottom: 15px;
+            color: var(--text-main);
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 15px; right: 15px;
+            background: none; border: none;
+            color: var(--text-muted);
+            font-size: 1.2rem;
+            cursor: pointer;
+        }
+
+        .pricing-box {
+            background: linear-gradient(135deg, var(--primary-brand), var(--accent));
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
             text-align: center;
+            margin-top: 15px;
+        }
+
+        .pricing-box h3 { font-size: 1.5rem; margin-bottom: 8px; }
+        .pricing-box p { font-size: 0.9rem; margin-bottom: 15px; opacity: 0.9; }
+
+        /* Panel de configuraciones flotante (Tecla 2) */
+        .settings-panel {
+            position: absolute;
+            top: 70px; right: 20px;
+            width: 280px;
+            background: var(--bg-panel);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 16px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.4);
+            display: none;
+            z-index: 50;
+        }
+
+        .shortcut-hint {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-top: 6px;
+        }
+
+        /* Notificaciones flotantes */
+        .toast {
+            position: fixed;
+            bottom: 20px; left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: var(--bg-panel);
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            padding: 10px 20px;
+            border-radius: 6px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            transition: transform 0.3s ease;
+            z-index: 1000;
+            font-size: 0.85rem;
+        }
+        .toast.show { transform: translateX(-50%) translateY(0); }
+
+        /* Responsive para celulares */
+        @media (max-width: 768px) {
+            .main-layout { flex-direction: column-reverse; overflow: auto; }
+            sidebar { width: 100%; height: 280px; }
+            .workspace { padding: 10px; }
+            .viewport-wrapper { width: 100% !important; height: 350px !important; resize: none; }
         }
     </style>
 </head>
 <body>
 
+    <!-- BARRA SUPERIOR -->
     <header>
-        <h1>KrhorkosImageEditor <span style="font-size: 0.8rem; color: #94a3b8;">v0.1</span></h1>
-        <button class="btn" id="downloadBtn">📥 Descargar Imagen</button>
+        <div class="brand">KrhorkosImageEditor</div>
+        <div class="header-actions">
+            <button class="btn btn-secondary" id="plansBtn">💎 Planes</button>
+            <button class="btn btn-secondary" onclick="toggleSettingsModal(true)">⚙️ Config (Tecla 2)</button>
+            <button class="btn" id="downloadBtn">📥 Descargar</button>
+        </div>
     </header>
 
-    <div class="main-container">
-        <!-- Panel de Herramientas -->
-        aside>
-            <div class="tool-section">
-                <h3>Fondo</h3>
-                <label>Subir Imagen de Fondo</label>
-                <input type="file" id="imageLoader" accept="image/*">
-                <label>O Color de Fondo</label>
-                <input type="color" id="bgColorPicker" value="#ffffff">
+    <!-- LAYOUT PRINCIPAL -->
+    <div class="main-layout">
+        <!-- BARRA LATERAL POR SECCIONES -->
+        <sidebar>
+            <!-- 1. Posición y Capas -->
+            <div class="sidebar-section">
+                <h3>1. Posición y Capas</h3>
+                <div class="control-group grid-buttons">
+                    <button class="btn btn-secondary" onclick="layerAction('front')">Encima de todas</button>
+                    <button class="btn btn-secondary" onclick="layerAction('back')">Al fondo</button>
+                    <button class="btn btn-secondary" onclick="layerAction('up')">Subir Capa</button>
+                    <button class="btn btn-secondary" onclick="layerAction('down')">Bajar Capa</button>
+                </div>
+                <div class="control-group" style="margin-top: 8px;">
+                    <label>Elementos en escena:</label>
+                    <div class="layers-list" id="layersList"></div>
+                </div>
+                <button class="btn btn-danger" style="width: 100%; margin-top: 8px;" onclick="deleteSelected()">🗑️ Borrar Seleccionado</button>
             </div>
 
-            <div class="tool-section">
-                <h3>Añadir Texto</h3>
-                <input type="text" id="textInput" placeholder="Escribe algo...">
-                <label>Color del Texto</label>
-                <input type="color" id="textColorPicker" value="#000000">
-                <label>Tamaño de Fuente</label>
-                <select id="fontSizeSelect">
-                    <option value="20">Pequeño (20px)</option>
-                    <option value="35" selected>Mediano (35px)</option>
-                    <option value="55">Grande (55px)</option>
-                </select>
-                <button class="btn" id="addTextBtn" style="width: 100%;">Agregar Texto</button>
+            <!-- 2. Agregar Formas -->
+            <div class="sidebar-section">
+                <h3>2. Formas Geométricas</h3>
+                <div class="grid-buttons">
+                    <button class="btn btn-secondary" onclick="addShape('rect')">Cuadrado</button>
+                    <button class="btn btn-secondary" onclick="addShape('rectangle')">Rectángulo</button>
+                    <button class="btn btn-secondary" onclick="addShape('circle')">Círculo</button>
+                    <button class="btn btn-secondary" onclick="addShape('diamond')">Rombo</button>
+                    <button class="btn btn-secondary" onclick="addShape('triangle')">Triángulo</button>
+                    <button class="btn btn-secondary" onclick="addShape('star')">Estrella</button>
+                </div>
+                <div class="shortcut-hint">💡 Tip: Selecciona una forma y presiona la tecla <b>1</b> para añadir simétricamente puntos de edición.</div>
             </div>
 
-            <div class="tool-section">
-                <h3>Formas</h3>
-                <button class="btn" id="addRectBtn" style="width: 100%; margin-bottom: 8px;">Agregar Rectángulo</button>
-                <button class="btn" id="addCircleBtn" style="width: 100%;">Agregar Círculo</button>
+            <!-- 3. Textos e Imágenes -->
+            <div class="sidebar-section">
+                <h3>3. Contenido (Texto e Imagen)</h3>
+                <div class="control-group">
+                    <label>Añadir Texto:</label>
+                    <input type="text" id="textInput" placeholder="Escribe tu texto...">
+                    <button class="btn" style="width: 100%; margin-top: 6px;" onclick="addTextElement()">Agregar Texto</button>
+                </div>
+                <div class="control-group" style="margin-top: 10px;">
+                    <label>Subir Imagen:</label>
+                    <input type="file" id="imageLoader" accept="image/*" style="font-size: 0.8rem; color: var(--text-muted);">
+                </div>
+                <div class="control-group" style="margin-top: 10px;">
+                    <button class="btn btn-secondary" style="width: 100%;" onclick="saveProjectStorage()">💾 Guardar Proyecto Local</button>
+                </div>
             </div>
-            
-            <div class="hint">
-                💡 Tip: Haz clic y arrastra cualquier texto o forma dentro del lienzo para moverlo.
-            </div>
-        </aside>
+        </sidebar>
 
-        <!-- Lienzo -->
+        <!-- VIEWPORT CENTRAL -->
         <div class="workspace">
-            <div class="canvas-container">
-                <canvas id="editorCanvas" width="800" height="500"></canvas>
+            <div class="viewport-wrapper" id="viewportWrapper">
+                <canvas id="mainCanvas" width="800" height="550"></canvas>
             </div>
         </div>
     </div>
 
+    <!-- PANEL DE CONFIGURACIONES FLOTANTE (Tecla 2) -->
+    <div class="settings-panel" id="settingsPanel">
+        <h3 style="font-size: 0.9rem; margin-bottom: 10px; color: var(--text-main);">Configuración General</h3>
+        <div class="control-group">
+            <label>Selector de Tema:</label>
+            <select id="themeSelector" onchange="changeTheme(this.value)">
+                <option value="dark">Oscuro Profesional</option>
+                <option value="light">Claro Estilo Canva</option>
+                <option value="cyberpunk">Cyberpunk Neón</option>
+            </select>
+        </div>
+        <div class="shortcut-hint" style="margin-top: 10px;">Presiona <b>2</b> para cerrar este panel.</div>
+    </div>
+
+    <!-- MODAL DE PLANES (Monetización) -->
+    <div class="modal-overlay" id="plansModal">
+        <div class="modal-card">
+            <button class="modal-close" onclick="togglePlansModal(false)">✕</button>
+            <h2>Planes y Licencias</h2>
+            <p style="color: var(--text-muted); font-size: 0.85rem;">Mejora tu experiencia con KrhorkosImageEditor para desbloquear funciones profesionales de exportación.</p>
+            
+            <div class="pricing-box">
+                <h3>1er Plan PRO</h3>
+                <p>Eliminación absoluta de la marca de agua obligatoria corporativa al exportar tus imágenes finales con calidad nativa.</p>
+                <button class="btn" style="background: white; color: var(--primary-brand); width: 100%; font-weight: 700;" onclick="activateProPlan()">Obtener Plan PRO</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- NOTIFICACIÓN TOAST -->
+    <div class="toast" id="toastMsg">Notificación</div>
+
+    <!-- SCRIPT DE LA APLICACIÓN -->
     <script>
-        const canvas = document.getElementById('editorCanvas');
+        // --- ESTADO GLOBAL Y LOCALSTORAGE ---
+        let state = {
+            theme: localStorage.getItem('krhorkos_theme') || 'dark',
+            isPro: localStorage.getItem('krhorkos_pro') === 'true',
+            elements: [],
+            selectedIndex: null,
+            dragging: false,
+            startX: 0,
+            startY: 0
+        };
+
+        const canvas = document.getElementById('mainCanvas');
         const ctx = canvas.getContext('2d');
 
-        // Elementos de control
-        const imageLoader = document.getElementById('imageLoader');
-        const bgColorPicker = document.getElementById('bgColorPicker');
-        const textInput = document.getElementById('textInput');
-        const textColorPicker = document.getElementById('textColorPicker');
-        const fontSizeSelect = document.getElementById('fontSizeSelect');
-        const addTextBtn = document.getElementById('addTextBtn');
-        const addRectBtn = document.getElementById('addRectBtn');
-        const addCircleBtn = document.getElementById('addCircleBtn');
-        const downloadBtn = document.getElementById('downloadBtn');
+        // Inicializar Tema al cargar
+        document.documentElement.setAttribute('data-theme', state.theme);
+        document.getElementById('themeSelector').value = state.theme;
 
-        // Estado del lienzo (Elementos interactivos)
-        let elements = [];
-        let backgroundImage = null;
-        let backgroundColor = "#ffffff";
+        function showToast(msg) {
+            const t = document.getElementById('toastMsg');
+            t.innerText = msg;
+            t.classList.add('show');
+            setTimeout(() => t.classList.remove('show'), 3000);
+        }
 
-        let selectedElement = null;
-        let isDragging = false;
-        let startX, startY;
+        // --- MANEJO DE TEMAS ---
+        function changeTheme(themeName) {
+            state.theme = themeName;
+            document.documentElement.setAttribute('data-theme', themeName);
+            localStorage.setItem('krhorkos_theme', themeName);
+            showToast(`Tema cambiado a: ${themeName}`);
+        }
 
-        // Función para redibujar todo el lienzo
-        function drawCanvas() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
+        // --- ATAJOS DE TECLADO (Tecla 1 y Tecla 2) ---
+        window.addEventListener('keydown', (e) => {
+            // Si está escribiendo en un input, ignorar atajos de letras
+            if (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT') return;
 
-            // 1. Dibujar fondo
-            if (backgroundImage) {
-                ctx.drawImage(backgroundImage, 0, 0, canvas.width, canvas.height);
-            } else {
-                ctx.fillStyle = backgroundColor;
-                ctx.fillRect(0, 0, canvas.width, canvas.height);
+            if (e.key === '2') {
+                const sp = document.getElementById('settingsPanel');
+                sp.style.display = sp.style.display === 'block' ? 'none' : 'block';
             }
 
-            // 2. Dibujar elementos (textos y formas)
-            elements.forEach(el => {
+            if (e.key === '1' && state.selectedIndex !== null) {
+                // Añadir simétricamente puntos de edición adicionales a los bordes de la forma seleccionada
+                let el = state.elements[state.selectedIndex];
+                if (el.type !== 'text' && el.type !== 'image') {
+                    el.extraEdges = (el.extraEdges || 0) + 1;
+                    redrawCanvas();
+                    showToast(`Puntos de edición ampliados (Nivel ${el.extraEdges})`);
+                }
+            }
+
+            if (e.key === 'Delete' || e.key === 'Backspace') {
+                deleteSelected();
+            }
+        });
+
+        // --- MODAL PLANES Y CONFIGURACIÓN ---
+        function togglePlansModal(show) {
+            document.getElementById('plansModal').style.display = show ? 'flex' : 'none';
+        }
+        function toggleSettingsModal(show) {
+            const sp = document.getElementById('settingsPanel');
+            sp.style.display = show && sp.style.display !== 'block' ? 'block' : 'none';
+        }
+
+        document.getElementById('plansBtn').addEventListener('click', () => togglePlansModal(true));
+
+        function activateProPlan() {
+            state.isPro = true;
+            localStorage.setItem('krhorkos_pro', 'true');
+            togglePlansModal(false);
+            showToast('¡Plan PRO activado con éxito! Marca de agua desactivada.');
+            redrawCanvas();
+        }
+
+        // --- MOTOR DE DIBUJO Y CAPAS ---
+        function addShape(shapeType) {
+            let newEl = {
+                type: shapeType,
+                x: 100 + Math.random() * 100,
+                y: 100 + Math.random() * 100,
+                width: 120,
+                height: 120,
+                radius: 60,
+                color: '#7928ca',
+                extraEdges: 0
+            };
+            state.elements.push(newEl);
+            state.selectedIndex = state.elements.length - 1;
+            redrawCanvas();
+            updateLayersUI();
+        }
+
+        function addTextElement() {
+            const textVal = document.getElementById('textInput').value.trim();
+            if (!textVal) return;
+            let newEl = {
+                type: 'text',
+                text: textVal,
+                x: 150,
+                y: 150,
+                size: 28,
+                color: getComputedStyle(document.documentElement).getPropertyValue('--text-main').trim()
+            };
+            state.elements.push(newEl);
+            document.getElementById('textInput').value = '';
+            state.selectedIndex = state.elements.length - 1;
+            redrawCanvas();
+            updateLayersUI();
+        }
+
+        // Cargar imagen local
+        document.getElementById('imageLoader').addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                const img = new Image();
+                img.onload = function() {
+                    let newEl = {
+                        type: 'image',
+                        imgObj: img,
+                        x: 80,
+                        y: 80,
+                        width: 200,
+                        height: (img.height * 200) / img.width
+                    };
+                    state.elements.push(newEl);
+                    state.selectedIndex = state.elements.length - 1;
+                    redrawCanvas();
+                    updateLayersUI();
+                }
+                img.src = event.target.result;
+            }
+            reader.readAsDataURL(file);
+        });
+
+        function redrawCanvas() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Dibujar todos los elementos según su orden de capa
+            state.elements.forEach((el, index) => {
                 ctx.save();
                 if (el.type === 'text') {
                     ctx.font = `${el.size}px sans-serif`;
                     ctx.fillStyle = el.color;
                     ctx.fillText(el.text, el.x, el.y);
-                } else if (el.type === 'rect') {
-                    ctx.fillStyle = el.color;
-                    ctx.fillRect(el.x, el.y, el.width, el.height);
-                } else if (el.type === 'circle') {
-                    ctx.fillStyle = el.color;
-                    ctx.beginPath();
-                    ctx.arc(el.x, el.y, el.radius, 0, Math.PI * 2);
-                    ctx.fill();
+                } else if (el.type === 'image') {
+                    ctx.drawImage(el.imgObj, el.x, el.y, el.width, el.height);
+                } else {
+                    drawGeometricShape(el);
+                }
+
+                // Si está seleccionado, dibujar contorno de selección y puntos de edición iniciales
+                if (index === state.selectedIndex) {
+                    ctx.strokeStyle = '#238636';
+                    ctx.lineWidth = 2;
+                    if (el.type === 'circle') {
+                        ctx.beginPath();
+                        ctx.arc(el.x, el.y, el.radius + 5, 0, Math.PI * 2);
+                        ctx.stroke();
+                    } else if (el.type !== 'text' && el.type !== 'image') {
+                        ctx.strokeRect(el.x - 5, el.y - 5, el.width + 10, el.height + 10);
+                        drawEditingPoints(el);
+                    }
                 }
                 ctx.restore();
             });
+
+            // MARCA DE AGUA OBLIGATORIA (A menos que sea PRO)
+            if (!state.isPro) {
+                ctx.save();
+                ctx.font = 'bold 12px monospace';
+                ctx.fillStyle = 'rgba(120, 120, 120, 0.7)';
+                ctx.textAlign = 'right';
+                ctx.fillText('© 2026 Krhorkos3DStudioAnd2D', canvas.width - 15, canvas.height - 15);
+                ctx.restore();
+            }
         }
 
-        // Cargar imagen de fondo
-        imageLoader.addEventListener('change', (e) => {
-            const reader = new FileReader();
-            reader.onload = function (event) {
-                const img = new Image();
-                img.onload = function () {
-                    backgroundImage = img;
-                    drawCanvas();
+        function drawGeometricShape(el) {
+            ctx.fillStyle = el.color;
+            ctx.beginPath();
+            let w = el.width;
+            let h = el.height;
+            let x = el.x;
+            let y = el.y;
+
+            if (el.type === 'rect') {
+                ctx.fillRect(x, y, w, w);
+            } else if (el.type === 'rectangle') {
+                ctx.fillRect(x, y, w, h);
+            } else if (el.type === 'circle') {
+                ctx.beginPath();
+                ctx.arc(x, y, el.radius, 0, Math.PI * 2);
+                ctx.fill();
+            } else if (el.type === 'diamond') {
+                ctx.moveTo(x + w/2, y);
+                ctx.lineTo(x + w, y + h/2);
+                ctx.lineTo(x + w/2, y + h);
+                ctx.lineTo(x, y + h/2);
+                ctx.closePath();
+                ctx.fill();
+            } else if (el.type === 'triangle') {
+                ctx.moveTo(x + w/2, y);
+                ctx.lineTo(x + w, y + h);
+                ctx.lineTo(x, y + h);
+                ctx.closePath();
+                ctx.fill();
+            } else if (el.type === 'star') {
+                // Dibujo de estrella geométrica
+                let cx = x + w/2, cy = y + h/2, spikes = 5, outerRadius = w/2, innerRadius = w/4;
+                let rot = Math.PI / 2 * 3;
+                let step = Math.PI / spikes;
+                ctx.beginPath();
+                ctx.moveTo(cx, cy - outerRadius);
+                for (let i = 0; i < spikes; i++) {
+                    let xCoord = cx + Math.cos(rot) * outerRadius;
+                    let yCoord = cy + Math.sin(rot) * outerRadius;
+                    ctx.lineTo(xCoord, yCoord);
+                    rot += step;
+                    xCoord = cx + Math.cos(rot) * innerRadius;
+                    yCoord = cy + Math.sin(rot) * innerRadius;
+                    ctx.lineTo(xCoord, yCoord);
+                    rot += step;
                 }
-                img.src = event.target.result;
+                ctx.lineTo(cx, cy - outerRadius);
+                ctx.closePath();
+                ctx.fill();
             }
-            reader.readAsDataURL(e.target.files[0]);
-        });
+        }
 
-        // Cambiar color de fondo sólido
-        bgColorPicker.addEventListener('input', (e) => {
-            backgroundColor = e.target.value;
-            backgroundImage = null; // Anula la imagen si usa color plano
-            drawCanvas();
-        });
+        // Dibujar esquinas y puntos de edición adicionales (tecla 1)
+        function drawEditingPoints(el) {
+            ctx.fillStyle = '#ff007f';
+            let points = [
+                {x: el.x, y: el.y},
+                {x: el.x + el.width, y: el.y},
+                {x: el.x, y: el.y + el.height},
+                {x: el.x + el.width, y: el.y + el.height}
+            ];
 
-        // Añadir texto
-        addTextBtn.addEventListener('click', () => {
-            const text = textInput.value.trim();
-            if (!text) return;
+            // Si presionó la tecla 1, generamos puntos intermedios simétricos en los bordes
+            let extra = el.extraEdges || 0;
+            for (let i = 1; i <= extra; i++) {
+                let factor = i / (extra + 1);
+                points.push({x: el.x + (el.width * factor), y: el.y}); // Borde superior
+                points.push({x: el.x + (el.width * factor), y: el.y + el.height}); // Borde inferior
+                points.push({x: el.x, y: el.y + (el.height * factor)}); // Borde izquierdo
+                points.push({x: el.x + el.width, y: el.y + (el.height * factor)}); // Borde derecho
+            }
 
-            elements.push({
-                type: 'text',
-                text: text,
-                x: 50,
-                y: 100,
-                color: textColorPicker.value,
-                size: parseInt(fontSizeSelect.value)
+            points.forEach(p => {
+                ctx.fillRect(p.x - 3, p.y - 3, 6, 6);
             });
-            textInput.value = '';
-            drawCanvas();
-        });
+        }
 
-        // Añadir rectángulo
-        addRectBtn.addEventListener('click', () => {
-            elements.push({
-                type: 'rect',
-                x: 100,
-                y: 100,
-                width: 150,
-                height: 100,
-                color: '#6366f1'
+        // --- GESTIÓN DE CAPAS UI ---
+        function updateLayersUI() {
+            const list = document.getElementById('layersList');
+            list.innerHTML = '';
+            state.elements.forEach((el, idx) => {
+                const div = document.createElement('div');
+                div.className = `layer-item ${idx === state.selectedIndex ? 'active' : ''}`;
+                div.innerHTML = `<span>[Capa ${idx + 1}] ${el.type.toUpperCase()}</span>`;
+                div.onclick = () => {
+                    state.selectedIndex = idx;
+                    redrawCanvas();
+                    updateLayersUI();
+                };
+                list.appendChild(div);
             });
-            drawCanvas();
-        });
+        }
 
-        // Añadir círculo
-        addCircleBtn.addEventListener('click', () => {
-            elements.push({
-                type: 'circle',
-                x: 150,
-                y: 150,
-                radius: 50,
-                color: '#ec4899'
-            });
-            drawCanvas();
-        });
+        function layerAction(action) {
+            if (state.selectedIndex === null) return;
+            let idx = state.selectedIndex;
+            let el = state.elements[idx];
 
-        // Interactividad del Mouse (Arrastrar elementos)
+            if (action === 'front') {
+                state.elements.splice(idx, 1);
+                state.elements.push(el);
+                state.selectedIndex = state.elements.length - 1;
+            } else if (action === 'back') {
+                state.elements.splice(idx, 1);
+                state.elements.unshift(el);
+                state.selectedIndex = 0;
+            } else if (action === 'up' && idx < state.elements.length - 1) {
+                state.elements.splice(idx, 1);
+                state.elements.splice(idx + 1, 0, el);
+                state.selectedIndex = idx + 1;
+            } else if (action === 'down' && idx > 0) {
+                state.elements.splice(idx, 1);
+                state.elements.splice(idx - 1, 0, el);
+                state.selectedIndex = idx - 1;
+            }
+            redrawCanvas();
+            updateLayersUI();
+        }
+
+        function deleteSelected() {
+            if (state.selectedIndex === null) return;
+            state.elements.splice(state.selectedIndex, 1);
+            state.selectedIndex = state.elements.length > 0 ? 0 : null;
+            redrawCanvas();
+            updateLayersUI();
+            showToast('Elemento borrado correctamente');
+        }
+
+        // --- INTERACTIVIDAD RATÓN / ARRASTRE ---
         canvas.addEventListener('mousedown', (e) => {
             const rect = canvas.getBoundingClientRect();
-            const mouseX = e.clientX - rect.left;
-            const mouseY = e.clientY - rect.top;
+            const scaleX = canvas.width / rect.width;
+            const scaleY = canvas.height / rect.height;
+            const mouseX = (e.clientX - rect.left) * scaleX;
+            const mouseY = (e.clientY - rect.top) * scaleY;
 
-            // Revisar si se hizo clic en algún elemento (desde el último al primero)
-            for (let i = elements.length - 1; i >= 0; i--) {
-                const el = elements[i];
-                if (el.type === 'text') {
-                    // Detección simple basada en caja de texto aproximada
-                    ctx.font = `${el.size}px sans-serif`;
-                    const metrics = ctx.measureText(el.text);
-                    const width = metrics.width;
-                    const height = el.size;
-                    
-                    if (mouseX >= el.x && mouseX <= el.x + width && mouseY >= el.y - height && mouseY <= el.y) {
-                        selectedElement = el;
-                        isDragging = true;
-                        startX = mouseX - el.x;
-                        startY = mouseY - el.y;
-                        break;
-                    }
-                } else if (el.type === 'rect') {
-                    if (mouseX >= el.x && mouseX <= el.x + el.width && mouseY >= el.y && mouseY <= el.y + el.height) {
-                        selectedElement = el;
-                        isDragging = true;
-                        startX = mouseX - el.x;
-                        startY = mouseY - el.y;
-                        break;
-                    }
-                } else if (el.type === 'circle') {
-                    const distX = mouseX - el.x;
-                    const distY = mouseY - el.y;
-                    if (Math.sqrt(distX * distX + distY * distY) <= el.radius) {
-                        selectedElement = el;
-                        isDragging = true;
-                        startX = mouseX - el.x;
-                        startY = mouseY - el.y;
-                        break;
-                    }
+            // Buscar elementos de arriba hacia abajo
+            state.selectedIndex = null;
+            for (let i = state.elements.length - 1; i >= 0; i--) {
+                let el = state.elements[i];
+                let hit = false;
+                if (el.type === 'circle') {
+                    let dist = Math.sqrt((mouseX - el.x)**2 + (mouseY - el.y)**2);
+                    if (dist <= el.radius) hit = true;
+                } else if (el.type === 'text') {
+                    if (mouseX >= el.x && mouseX <= el.x + 100 && mouseY >= el.y - 25 && mouseY <= el.y) hit = true;
+                } else {
+                    if (mouseX >= el.x && mouseX <= el.x + el.width && mouseY >= el.y && mouseY <= el.y + el.height) hit = true;
+                }
+
+                if (hit) {
+                    state.selectedIndex = i;
+                    state.dragging = true;
+                    state.startX = mouseX - el.x;
+                    state.startY = mouseY - el.y;
+                    break;
                 }
             }
+            redrawCanvas();
+            updateLayersUI();
         });
 
         canvas.addEventListener('mousemove', (e) => {
-            if (isDragging && selectedElement) {
-                const rect = canvas.getBoundingClientRect();
-                const mouseX = e.clientX - rect.left;
-                const mouseY = e.clientY - rect.top;
+            if (!state.dragging || state.selectedIndex === null) return;
+            const rect = canvas.getBoundingClientRect();
+            const scaleX = canvas.width / rect.width;
+            const scaleY = canvas.height / rect.height;
+            const mouseX = (e.clientX - rect.left) * scaleX;
+            const mouseY = (e.clientY - rect.top) * scaleY;
 
-                selectedElement.x = mouseX - startX;
-                selectedElement.y = mouseY - startY;
-                drawCanvas();
-            }
+            let el = state.elements[state.selectedIndex];
+            el.x = mouseX - state.startX;
+            el.y = mouseY - state.startY;
+            redrawCanvas();
         });
 
-        canvas.addEventListener('mouseup', () => {
-            isDragging = false;
-            selectedElement = null;
-        });
+        window.addEventListener('mouseup', () => { state.dragging = false; });
 
-        // Descargar Imagen
-        downloadBtn.addEventListener('click', () => {
+        // --- GUARDAR Y DESCARGAR ---
+        function saveProjectStorage() {
+            localStorage.setItem('krhorkos_project', JSON.stringify(state.elements));
+            showToast('¡Proyecto guardado localmente en el navegador!');
+        }
+
+        document.getElementById('downloadBtn').addEventListener('click', () => {
+            // El canvas ya incluye la marca de agua integrada obligatoria si no es PRO
             const link = document.createElement('a');
-            link.download = 'krhorkos-creacion.png';
+            link.download = 'krhorkos-diseño.png';
             link.href = canvas.toDataURL('image/png');
             link.click();
+            showToast('Imagen exportada con éxito');
         });
 
-        
-        drawCanvas();
+        // Cargar proyecto previo si existe
+        window.addEventListener('load', () => {
+            let saved = localStorage.getItem('krhorkos_project');
+            if (saved) {
+                try {
+                    let parsed = JSON.parse(saved);
+                    // Restaurar referencias de imágenes si las hubiera
+                    state.elements = parsed;
+                    redrawCanvas();
+                    updateLayersUI();
+                } catch(err) { console.error(err); }
+            }
+        });
     </script>
 </body>
 </html>
