@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>KrhorkosImageEditor</title>
+    <title>KrhorkosImageEditor PRO</title>
     <style>
         /* --- TEMA Y VARIABLES --- */
         :root[data-theme="dark"] {
@@ -63,6 +63,98 @@
             transition: background 0.3s, color 0.3s;
         }
 
+        /* --- PANTALLA DE BIENVENIDA & MENÚ LATERAL ESTILO GODOT --- */
+        #welcomeScreen {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--bg-main);
+            z-index: 2000;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            transition: opacity 0.4s ease;
+        }
+
+        .welcome-card {
+            background: var(--bg-panel);
+            border: 1px solid var(--border-color);
+            padding: 40px;
+            border-radius: 12px;
+            text-align: center;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.6);
+            max-width: 500px;
+            width: 90%;
+        }
+
+        .welcome-card h1 {
+            font-size: 2rem;
+            margin-bottom: 10px;
+            background: linear-gradient(45deg, var(--primary-brand), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .welcome-card p {
+            color: var(--text-muted);
+            margin-bottom: 25px;
+            font-size: 0.95rem;
+        }
+
+        /* Panel lateral estilo Godot al entrar */
+        #godotSidebar {
+            position: fixed;
+            top: 0; left: -320px; width: 320px; height: 100%;
+            background: var(--bg-panel);
+            border-right: 1px solid var(--border-color);
+            z-index: 1500;
+            display: flex;
+            flex-direction: column;
+            transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 10px 0 30px rgba(0,0,0,0.5);
+        }
+
+        #godotSidebar.open { left: 0; }
+
+        .godot-header {
+            padding: 20px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .godot-body {
+            padding: 15px;
+            overflow-y: auto;
+            flex: 1;
+        }
+
+        .godot-section-title {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            margin: 15px 0 8px 0;
+            letter-spacing: 0.8px;
+            font-weight: 700;
+        }
+
+        .godot-item {
+            padding: 10px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            margin-bottom: 8px;
+            font-size: 0.85rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .godot-item:hover { background: var(--border-color); }
+
         /* --- HEADER / NAVEGACIÓN --- */
         header {
             height: 60px;
@@ -81,25 +173,26 @@
             background: linear-gradient(45deg, var(--primary-brand), var(--accent));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            letter-spacing: 0.5px;
+            cursor: pointer;
         }
 
         .header-actions {
             display: flex;
-            gap: 12px;
+            gap: 10px;
             align-items: center;
+            flex-wrap: wrap;
         }
 
         .btn {
             background-color: var(--accent);
             color: white;
             border: none;
-            padding: 8px 16px;
+            padding: 7px 14px;
             border-radius: 6px;
             font-weight: 600;
             cursor: pointer;
             transition: background 0.2s, transform 0.1s;
-            font-size: 0.85rem;
+            font-size: 0.8rem;
         }
 
         .btn:hover { background-color: var(--accent-hover); }
@@ -119,7 +212,7 @@
 
         /* --- BARRA LATERAL (HERRAMIENTAS Y CAPAS) --- */
         sidebar {
-            width: 320px;
+            width: 310px;
             background-color: var(--bg-panel);
             border-right: 1px solid var(--border-color);
             display: flex;
@@ -129,15 +222,15 @@
         }
 
         .sidebar-section {
-            padding: 16px;
+            padding: 14px;
             border-bottom: 1px solid var(--border-color);
         }
 
         .sidebar-section h3 {
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             text-transform: uppercase;
             color: var(--text-muted);
-            margin-bottom: 12px;
+            margin-bottom: 10px;
             letter-spacing: 0.5px;
         }
 
@@ -147,29 +240,36 @@
 
         .control-group label {
             display: block;
-            font-size: 0.8rem;
+            font-size: 0.78rem;
             margin-bottom: 4px;
             color: var(--text-main);
         }
 
-        .control-group select, .control-group input[type="text"], .control-group input[type="number"] {
+        .control-group select, .control-group input[type="text"], .control-group input[type="number"], .control-group input[type="color"] {
             width: 100%;
-            padding: 8px;
+            padding: 7px;
             background: var(--bg-secondary);
             border: 1px solid var(--border-color);
             color: var(--text-main);
             border-radius: 4px;
-            font-size: 0.85rem;
+            font-size: 0.82rem;
+        }
+
+        .control-group input[type="color"] {
+            height: 36px;
+            padding: 2px;
+            cursor: pointer;
         }
 
         .grid-buttons {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
-            gap: 8px;
+            gap: 6px;
         }
 
-        .layers-list {
-            max-height: 150px;
+        /* Barra de formas de escena con renombrado */
+        .scene-shapes-list {
+            max-height: 140px;
             overflow-y: auto;
             background: var(--bg-secondary);
             border: 1px solid var(--border-color);
@@ -177,19 +277,32 @@
             padding: 4px;
         }
 
-        .layer-item {
-            padding: 6px 10px;
-            font-size: 0.8rem;
+        .scene-shape-item {
+            padding: 6px 8px;
+            font-size: 0.78rem;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            cursor: pointer;
+            background: var(--bg-panel);
+            border: 1px solid var(--border-color);
             border-radius: 3px;
-            margin-bottom: 2px;
+            margin-bottom: 3px;
+            cursor: pointer;
         }
 
-        .layer-item:hover { background-color: var(--border-color); }
-        .layer-item.active { background-color: var(--accent); color: white; }
+        .scene-shape-item.active {
+            border-color: var(--accent);
+            background: rgba(35, 134, 54, 0.15);
+        }
+
+        .scene-shape-item input {
+            background: transparent;
+            border: none;
+            color: var(--text-main);
+            font-size: 0.78rem;
+            width: 120px;
+            outline: none;
+        }
 
         /* --- VIEWPORT CENTRAL --- */
         .workspace {
@@ -200,10 +313,10 @@
             align-items: center;
             overflow: auto;
             position: relative;
-            padding: 40px;
+            padding: 30px;
         }
 
-        /* Lienzo redimensionable por el usuario */
+        /* Patrón de fondo ajedrezado alternativo */
         .viewport-wrapper {
             position: relative;
             resize: both;
@@ -214,9 +327,19 @@
             max-height: 900px;
             width: 800px;
             height: 550px;
-            background: #ffffff;
+            background-color: #ffffff;
             box-shadow: 0 10px 30px rgba(0,0,0,0.5);
             border: 2px dashed var(--border-color);
+        }
+
+        .viewport-wrapper.checkerboard {
+            background-image: 
+                linear-gradient(45deg, #ccc 25%, transparent 25%), 
+                linear-gradient(-45deg, #ccc 25%, transparent 25%), 
+                linear-gradient(45deg, transparent 75%, #ccc 75%), 
+                linear-gradient(-45deg, transparent 75%, #ccc 75%);
+            background-size: 20px 20px;
+            background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
         }
 
         canvas {
@@ -226,7 +349,25 @@
             cursor: crosshair;
         }
 
-        /* --- MODALES Y PANELES FLOTANTES --- */
+        /* --- ATAJOS RÁPIDOS INFERIORES EN CAPA 1 --- */
+        .quick-shortcuts-bar {
+            position: absolute;
+            bottom: 10px; left: 10px;
+            background: var(--bg-panel);
+            border: 1px solid var(--border-color);
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 0.72rem;
+            color: var(--text-muted);
+            z-index: 4;
+            display: flex;
+            gap: 12px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+        }
+
+        .quick-shortcuts-bar span { color: var(--text-main); font-weight: 600; }
+
+        /* --- VENTANAS FLOTANTES Y MODALES --- */
         .modal-overlay {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -234,31 +375,27 @@
             display: none;
             justify-content: center;
             align-items: center;
-            z-index: 100;
+            z-index: 2500;
             backdrop-filter: blur(3px);
         }
 
         .modal-card {
             background: var(--bg-panel);
             border: 1px solid var(--border-color);
-            width: 450px;
+            width: 480px;
             max-width: 90%;
             border-radius: 12px;
             padding: 24px;
             box-shadow: 0 20px 40px rgba(0,0,0,0.6);
             position: relative;
             animation: modalPop 0.25s ease-out;
+            max-height: 85vh;
+            overflow-y: auto;
         }
 
         @keyframes modalPop {
             0% { transform: scale(0.9); opacity: 0; }
             100% { transform: scale(1); opacity: 1; }
-        }
-
-        .modal-card h2 {
-            font-size: 1.3rem;
-            margin-bottom: 15px;
-            color: var(--text-main);
         }
 
         .modal-close {
@@ -270,63 +407,35 @@
             cursor: pointer;
         }
 
-        .pricing-box {
-            background: linear-gradient(135deg, var(--primary-brand), var(--accent));
-            color: white;
-            padding: 20px;
-            border-radius: 8px;
-            text-align: center;
-            margin-top: 15px;
-        }
-
-        .pricing-box h3 { font-size: 1.5rem; margin-bottom: 8px; }
-        .pricing-box p { font-size: 0.9rem; margin-bottom: 15px; opacity: 0.9; }
-
-        /* Redes Sociales Grid */
-        .social-grid {
+        /* Botones de atajos transparentes interactivos (Ctrl+B) */
+        .shortcut-grid {
             display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px;
             margin-top: 15px;
         }
-        .social-btn {
-            background: var(--bg-secondary);
+
+        .shortcut-btn-card {
+            background: transparent;
             border: 1px solid var(--border-color);
+            color: var(--text-main);
             padding: 10px;
             border-radius: 6px;
-            color: var(--text-main);
-            text-decoration: none;
-            text-align: center;
+            text-align: left;
+            cursor: pointer;
+            transition: all 0.2s;
             font-size: 0.8rem;
-            font-weight: 600;
-            display: block;
-            transition: background 0.2s;
-        }
-        .social-btn:hover {
-            background: var(--border-color);
         }
 
-        /* Panel de configuraciones flotante (Tecla 2) */
-        .settings-panel {
-            position: absolute;
-            top: 70px; right: 20px;
-            width: 280px;
-            background: var(--bg-panel);
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            padding: 16px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.4);
-            display: none;
-            z-index: 50;
+        .shortcut-btn-card:hover {
+            background: var(--accent);
+            border-color: var(--accent);
+            color: white;
         }
 
-        .shortcut-hint {
-            font-size: 0.75rem;
-            color: var(--text-muted);
-            margin-top: 6px;
-        }
+        .shortcut-btn-card strong { display: block; margin-bottom: 3px; font-size: 0.85rem; }
 
-        /* Notificaciones flotantes */
+        /* Notificación Toast */
         .toast {
             position: fixed;
             bottom: 20px; left: 50%;
@@ -338,81 +447,103 @@
             border-radius: 6px;
             box-shadow: 0 5px 15px rgba(0,0,0,0.3);
             transition: transform 0.3s ease;
-            z-index: 1000;
+            z-index: 3000;
             font-size: 0.85rem;
         }
         .toast.show { transform: translateX(-50%) translateY(0); }
-
-        /* Responsive para celulares */
-        @media (max-width: 768px) {
-            .main-layout { flex-direction: column-reverse; overflow: auto; }
-            sidebar { width: 100%; height: 280px; }
-            .workspace { padding: 10px; }
-            .viewport-wrapper { width: 100% !important; height: 350px !important; resize: none; }
-        }
     </style>
 </head>
 <body>
 
+    <!-- PANTALLA DE BIENVENIDA INICIAL -->
+    <div id="welcomeScreen">
+        <div class="welcome-card">
+            <h1>KrhorkosImageEditor PRO</h1>
+            <p>Herramienta avanzada de edición, dibujo vectorial, deformación por vértices y animación 2D.</p>
+            <button class="btn" style="width: 100%; padding: 12px; font-size: 1rem;" onclick="enterApp()">🚀 Ingresar al Editor</button>
+        </div>
+    </div>
+
+    <!-- MENÚ LATERAL ESTILO GODOT (Desplegable a la izquierda) -->
+    <div id="godotSidebar">
+        <div class="godot-header">
+            <span style="font-weight: 700; font-size: 0.95rem;">📂 Menú de Proyectos</span>
+            <button class="modal-close" style="position:static;" onclick="toggleGodotSidebar(false)">✕</button>
+        </div>
+        <div class="godot-body">
+            <div class="godot-section-title">Proyectos Recientes</div>
+            <div id="recentProjectsList"></div>
+
+            <div class="godot-section-title" style="margin-top: 20px;">🗑️ Papelera de Reciclaje</div>
+            <div id="trashProjectsList"></div>
+        </div>
+    </div>
+
     <!-- BARRA SUPERIOR -->
     <header>
-        <div class="brand">KrhorkosImageEditor</div>
+        <div class="brand" onclick="toggleGodotSidebar(true)" title="Abrir Menú Godot">KrhorkosImageEditor ☰</div>
         <div class="header-actions">
-            <button class="btn btn-secondary" id="socialBtnModal">🌐 Redes del Creador</button>
-            <button class="btn btn-secondary" id="plansBtn">💎 Planes</button>
-            <button class="btn btn-secondary" onclick="toggleSettingsModal(true)">⚙️ Config (Tecla 2)</button>
+            <button class="btn btn-secondary" onclick="toggleGodotSidebar(true)">📂 Proyectos / Papelera</button>
+            <button class="btn btn-secondary" onclick="toggleModal('animationModal', true)">🎬 Animaciones (Ctrl+F1)</button>
+            <button class="btn btn-secondary" onclick="toggleModal('shortcutsModal', true)">⌨️ Atajos (Ctrl+B)</button>
+            <button class="btn btn-secondary" onclick="toggleModal('settingsModal', true)">⚙️ Ajustes</button>
             <button class="btn" id="downloadBtn">📥 Descargar</button>
         </div>
     </header>
 
     <!-- LAYOUT PRINCIPAL -->
     <div class="main-layout">
-        <!-- BARRA LATERAL POR SECCIONES -->
+        <!-- BARRA LATERAL DE HERRAMIENTAS Y CAPAS -->
         <sidebar>
-            <!-- 1. Posición y Capas -->
+            <!-- 1. Lista de Formas y Nombres -->
             <div class="sidebar-section">
-                <h3>1. Posición y Capas</h3>
-                <div class="control-group grid-buttons">
-                    <button class="btn btn-secondary" onclick="layerAction('front')">Encima de todas</button>
-                    <button class="btn btn-secondary" onclick="layerAction('back')">Al fondo</button>
-                    <button class="btn btn-secondary" onclick="layerAction('up')">Subir Capa</button>
-                    <button class="btn btn-secondary" onclick="layerAction('down')">Bajar Capa</button>
+                <h3>Formas y Objetos en Escena</h3>
+                <div class="control-group">
+                    <label>Renombrar y Seleccionar:</label>
+                    <div class="scene-shapes-list" id="sceneShapesList"></div>
                 </div>
-                <div class="control-group" style="margin-top: 8px;">
-                    <label>Elementos en escena:</label>
-                    <div class="layers-list" id="layersList"></div>
+                <div class="grid-buttons" style="margin-top: 8px;">
+                    <button class="btn btn-secondary" onclick="changeSelectedColor()">🎨 Color</button>
+                    <button class="btn btn-secondary" onclick="changeSelectedOpacity()">👁️ Opacidad</button>
                 </div>
+                <input type="color" id="activeColorPicker" value="#7928ca" style="display:none;" onchange="applyColorToSelected(this.value)">
                 <button class="btn btn-danger" style="width: 100%; margin-top: 8px;" onclick="deleteSelected()">🗑️ Borrar Seleccionado</button>
             </div>
 
-            <!-- 2. Agregar Formas -->
+            <!-- 2. Creación de Formas, Terrenos y Trazos -->
             <div class="sidebar-section">
-                <h3>2. Formas Geométricas</h3>
+                <h3>Herramientas de Dibujo</h3>
                 <div class="grid-buttons">
                     <button class="btn btn-secondary" onclick="addShape('rect')">Cuadrado</button>
                     <button class="btn btn-secondary" onclick="addShape('rectangle')">Rectángulo</button>
                     <button class="btn btn-secondary" onclick="addShape('circle')">Círculo</button>
-                    <button class="btn btn-secondary" onclick="addShape('diamond')">Rombo</button>
                     <button class="btn btn-secondary" onclick="addShape('triangle')">Triángulo</button>
-                    <button class="btn btn-secondary" onclick="addShape('star')">Estrella</button>
                 </div>
-                <div class="shortcut-hint">💡 Tip: Presiona la tecla <b>1</b> para activar/desactivar los vértices de deformación de la figura seleccionada. Arrastra los puntos rojos para deformar.</div>
+                <div class="control-group" style="margin-top: 8px;">
+                    <label>Forma Aleatoria (Terreno/Continente): <span id="roughnessVal">50</span>%</label>
+                    <input type="range" id="roughnessSlider" min="10" max="90" value="50" style="width:100%;" oninput="document.getElementById('roughnessVal').innerText=this.value">
+                    <button class="btn btn-secondary" style="width: 100%; margin-top: 4px;" onclick="addRandomTerrain()">⛰️ Generar Forma Aleatoria</button>
+                </div>
+                <div class="shortcut-hint" style="font-size: 0.72rem; color: var(--text-muted); margin-top: 6px;">
+                    • <b>Tecla 1</b>: Incrementar puntos de edición.<br>
+                    • <b>Tecla TAB</b>: Activar/desactivar Modo Edición en forma seleccionada.<br>
+                    • <b>Tecla 2</b>: Modo Dibujo (trazos libres con ratón).<br>
+                    • <b>Tecla 3</b>: Herramienta Curvas (clics continuos).
+                </div>
             </div>
 
-            <!-- 3. Textos e Imágenes -->
+            <!-- 3. Herramientas Avanzadas y Rellenos -->
             <div class="sidebar-section">
-                <h3>3. Contenido (Texto e Imagen)</h3>
-                <div class="control-group">
-                    <label>Añadir Texto:</label>
-                    <input type="text" id="textInput" placeholder="Escribe tu texto...">
-                    <button class="btn" style="width: 100%; margin-top: 6px;" onclick="addTextElement()">Agregar Texto</button>
+                <h3>Rellenos y Geometría</h3>
+                <div class="grid-buttons">
+                    <button class="btn btn-secondary" onclick="activateTool('fillHole')" id="btnFillHole">🪣 Rellenar Huecos</button>
+                    <button class="btn btn-secondary" onclick="autoFillAllShapes()">⚡ Relleno Auto</button>
+                    <button class="btn btn-secondary" onclick="activateTool('refPoint')" id="btnRefPoint">📍 Puntos Ref.</button>
+                    <button class="btn btn-secondary" onclick="activateTool('joinPoints')" id="btnJoinPoints">🔗 Juntar Puntos</button>
                 </div>
                 <div class="control-group" style="margin-top: 10px;">
-                    <label>Subir Imagen o Recorte:</label>
-                    <input type="file" id="imageLoader" accept="image/*" style="font-size: 0.8rem; color: var(--text-muted);">
-                </div>
-                <div class="control-group" style="margin-top: 10px;">
-                    <button class="btn btn-secondary" style="width: 100%;" onclick="saveProjectStorage()">💾 Guardar Proyecto Local</button>
+                    <label>Importar Imagen:</label>
+                    <input type="file" id="imageLoader" accept="image/*" style="font-size: 0.78rem; color: var(--text-muted);">
                 </div>
             </div>
         </sidebar>
@@ -422,50 +553,117 @@
             <div class="viewport-wrapper" id="viewportWrapper">
                 <canvas id="mainCanvas" width="800" height="550"></canvas>
             </div>
-        </div>
-    </div>
-
-    <!-- PANEL DE CONFIGURACIONES FLOTANTE (Tecla 2) -->
-    <div class="settings-panel" id="settingsPanel">
-        <h3 style="font-size: 0.9rem; margin-bottom: 10px; color: var(--text-main);">Configuración General</h3>
-        <div class="control-group">
-            <label>Selector de Tema:</label>
-            <select id="themeSelector" onchange="changeTheme(this.value)">
-                <option value="dark">Oscuro Profesional</option>
-                <option value="light">Claro Estilo Canva</option>
-                <option value="cyberpunk">Cyberpunk Neón</option>
-            </select>
-        </div>
-        <div class="shortcut-hint" style="margin-top: 10px;">Presiona <b>2</b> para cerrar este panel.</div>
-    </div>
-
-    <!-- MODAL DE REDES SOCIALES -->
-    <div class="modal-overlay" id="socialModal">
-        <div class="modal-card">
-            <button class="modal-close" onclick="toggleSocialModal(false)">✕</button>
-            <h2>Redes Sociales del Creador</h2>
-            <p style="color: var(--text-muted); font-size: 0.85rem;">¡Sígueme en mis plataformas oficiales para más herramientas y contenido 3D/2D!</p>
-            
-            <div class="social-grid">
-                <a href="https://www.instagram.com/krhorkos3dstudioand2d/" target="_blank" class="social-btn">📸 Instagram</a>
-                <a href="https://x.com/krhorkos3DAnd2D" target="_blank" class="social-btn">✖️ X (Twitter)</a>
-                <a href="https://www.youtube.com/@Krhorkos3DStudioAnd2D-b6g" target="_blank" class="social-btn">▶️ YouTube</a>
-                <a href="https://alex293517.itch.io/" target="_blank" class="social-btn">🎮 Itch.io</a>
+            <!-- ATAJOS RÁPIDOS VISIBLES EN CAPA 1 -->
+            <div class="quick-shortcuts-bar">
+                <div><span>Tab:</span> Modo Ed</div>
+                <div><span>1:</span> Puntos+</div>
+                <div><span>2:</span> Dibujo</div>
+                <div><span>3:</span> Curvas</div>
+                <div><span>Ctrl+J:</span> Fusionar</div>
+                <div><span>Ctrl+S:</span> Guardar</div>
             </div>
         </div>
     </div>
 
-    <!-- MODAL DE PLANES (Monetización) -->
-    <div class="modal-overlay" id="plansModal">
+    <!-- MODAL DE ATAJOS (Ctrl + B) -->
+    <div class="modal-overlay" id="shortcutsModal">
         <div class="modal-card">
-            <button class="modal-close" onclick="togglePlansModal(false)">✕</button>
-            <h2>Planes y Licencias</h2>
-            <p style="color: var(--text-muted); font-size: 0.85rem;">Mejora tu experiencia con KrhorkosImageEditor para desbloquear funciones profesionales de exportación.</p>
+            <button class="modal-close" onclick="toggleModal('shortcutsModal', false)">✕</button>
+            <h2>Atajos del Sistema</h2>
+            <p style="color: var(--text-muted); font-size: 0.85rem;">Pasa el cursor o pulsa sobre los botones de atajo para ver su función detallada.</p>
+            <div class="shortcut-grid">
+                <div class="shortcut-btn-card" title="Activa el modo de edición de vértices en la figura seleccionada.">
+                    <strong>Tecla TAB</strong> Activar Modo Edición
+                </div>
+                <div class="shortcut-btn-card" title="Incrementa los puntos de control y edición de la figura.">
+                    <strong>Tecla 1</strong> Incrementar Vértices
+                </div>
+                <div class="shortcut-btn-card" title="Activa el trazo libre con el ratón en el viewport.">
+                    <strong>Tecla 2</strong> Modo Dibujo Ratón
+                </div>
+                <div class="shortcut-btn-card" title="Permite trazar curvas suaves mediante múltiples clics.">
+                    <strong>Tecla 3</strong> Herramienta Curvas
+                </div>
+                <div class="shortcut-btn-card" title="Fusiona dos o más formas seleccionadas en una sola entidad.">
+                    <strong>Ctrl + J</strong> Fusionar Formas
+                </div>
+                <div class="shortcut-btn-card" title="Separa una forma fusionada en sus partes originales independientes.">
+                    <strong>Ctrl + J + Menos</strong> Separar Formas
+                </div>
+                <div class="shortcut-btn-card" title="Guarda el proyecto actual en el almacenamiento local automáticamente.">
+                    <strong>Ctrl + S</strong> Guardar Proyecto
+                </div>
+                <div class="shortcut-btn-card" title="Abre el panel de animación 2D entre fotogramas.">
+                    <strong>Ctrl + F1</strong> Abrir Animaciones
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL DE ANIMACIONES (Ctrl + F1) -->
+    <div class="modal-overlay" id="animationModal">
+        <div class="modal-card">
+            <button class="modal-close" onclick="toggleModal('animationModal', false)">✕</button>
+            <h2>Animación 2D por Fotogramas</h2>
+            <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 15px;">Selecciona imágenes para previsualizar una animación simple entre el Fotograma 1 y el Fotograma 2.</p>
             
-            <div class="pricing-box">
-                <h3>1er Plan PRO</h3>
-                <p>Eliminación absoluta de la marca de agua obligatoria corporativa al exportar tus imágenes finales con calidad nativa.</p>
-                <button class="btn" style="background: white; color: var(--primary-brand); width: 100%; font-weight: 700;" onclick="activateProPlan()">Obtener Plan PRO</button>
+            <div class="control-group">
+                <label>Fotograma 1 (Imagen):</label>
+                <input type="file" id="animFrame1" accept="image/*" onchange="loadAnimFrame(1, event)">
+            </div>
+            <div class="control-group" style="margin-top: 10px;">
+                <label>Fotograma 2 (Imagen):</label>
+                <input type="file" id="animFrame2" accept="image/*" onchange="loadAnimFrame(2, event)">
+            </div>
+            <div style="margin-top: 15px; text-align: center;">
+                <button class="btn" onclick="toggleAnimationPlayback()" id="playAnimBtn">▶ Reproducir Animación</button>
+            </div>
+            <div id="animPreviewContainer" style="margin-top: 15px; text-align: center; height: 180px; background: var(--bg-secondary); border-radius: 6px; display: flex; align-items: center; justify-content: center; overflow: hidden;">
+                <span style="color: var(--text-muted); font-size: 0.8rem;">Carga ambos fotogramas para animar</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL DE AJUSTES -->
+    <div class="modal-overlay" id="settingsModal">
+        <div class="modal-card">
+            <button class="modal-close" onclick="toggleModal('settingsModal', false)">✕</button>
+            <h2>Ajustes del Sitio</h2>
+            <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 15px;">Tus preferencias se guardan y recuerdan automáticamente.</p>
+            
+            <div class="control-group">
+                <label>Apariencia Visual / Tema:</label>
+                <select id="themeSelector" onchange="changeTheme(this.value)">
+                    <option value="dark">Oscuro Profesional</option>
+                    <option value="light">Claro Estilo Canva</option>
+                    <option value="cyberpunk">Cyberpunk Neón</option>
+                </select>
+            </div>
+            <div class="control-group" style="margin-top: 10px;">
+                <label>Idioma del Sitio:</label>
+                <select id="langSelector" onchange="saveSettings()">
+                    <option value="es">Español</option>
+                    <option value="en">English</option>
+                </select>
+            </div>
+            <div class="control-group" style="margin-top: 10px;">
+                <button class="btn btn-secondary" style="width: 100%;" onclick="toggleCheckerboard()">🏁 Alternar Fondo Ajedrezado</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL DE CONFIRMACIÓN DE ELIMINACIÓN DEFINITIVA -->
+    <div class="modal-overlay" id="confirmDeleteModal">
+        <div class="modal-card" style="width: 400px;">
+            <h2>⚠️ Eliminar Definitivamente</h2>
+            <p style="color: var(--text-muted); font-size: 0.85rem; margin: 15px 0;">¿Estás seguro de que deseas eliminar este proyecto de forma permanente?</p>
+            <div style="margin-bottom: 15px; display: flex; align-items: center; gap: 8px;">
+                <input type="checkbox" id="dontAskAgainCheck">
+                <label for="dontAskAgainCheck" style="font-size: 0.8rem; cursor:pointer;">No volver a preguntar en esta sesión</label>
+            </div>
+            <div style="display: flex; gap: 10px; justify-content: flex-end;">
+                <button class="btn btn-secondary" onclick="closeConfirmModal(false)">Cancelar</button>
+                <button class="btn btn-danger" onclick="closeConfirmModal(true)">Eliminar Permanentemente</button>
             </div>
         </div>
     </div>
@@ -475,24 +673,49 @@
 
     <!-- SCRIPT DE LA APLICACIÓN -->
     <script>
-        // --- ESTADO GLOBAL Y LOCALSTORAGE ---
+        // --- ESTADO GLOBAL Y CONFIGURACIÓN PERSISTENTE ---
+        let userSettings = JSON.parse(localStorage.getItem('krhorkos_settings')) || {
+            theme: 'dark',
+            lang: 'es',
+            checkerboard: false,
+            dontAskAgainDelete: false
+        };
+
         let state = {
-            theme: localStorage.getItem('krhorkos_theme') || 'dark',
-            isPro: localStorage.getItem('krhorkos_pro') === 'true',
             elements: [],
             selectedIndex: null,
+            activeTool: null, // 'fillHole', 'refPoint', 'joinPoints', 'draw', 'curve'
+            drawingPoints: [],
+            curvePoints: [],
+            refPoints: [],
+            joinedLines: [],
+            vertexCountMultiplier: 4,
+            isEditingMode: false,
             dragging: false,
-            draggingVertexIndex: null, // Índice del vértice de deformación siendo arrastrado
+            draggingVertexIndex: null,
             startX: 0,
             startY: 0
         };
 
+        let projectsRecent = JSON.parse(localStorage.getItem('krhorkos_recents')) || [
+            { id: 1, name: 'Proyecto Paisaje 3D', date: '2026-06-01' },
+            { id: 2, name: 'Modelo de Criatura 2D', date: '2026-06-03' }
+        ];
+
+        let projectsTrash = JSON.parse(localStorage.getItem('krhorkos_trash')) || [];
+        let pendingDeleteId = null;
+        let animImages = { frame1: null, frame2: null, playing: false, interval: null };
+
         const canvas = document.getElementById('mainCanvas');
         const ctx = canvas.getContext('2d');
 
-        // Inicializar Tema al cargar
-        document.documentElement.setAttribute('data-theme', state.theme);
-        document.getElementById('themeSelector').value = state.theme;
+        // Inicializar preferencias guardadas
+        document.documentElement.setAttribute('data-theme', userSettings.theme);
+        document.getElementById('themeSelector').value = userSettings.theme;
+        document.getElementById('langSelector').value = userSettings.lang;
+        if (userSettings.checkerboard) {
+            document.getElementById('viewportWrapper').classList.add('checkerboard');
+        }
 
         function showToast(msg) {
             const t = document.getElementById('toastMsg');
@@ -501,322 +724,308 @@
             setTimeout(() => t.classList.remove('show'), 3000);
         }
 
-        // --- MANEJO DE TEMAS ---
+        function saveSettings() {
+            userSettings.theme = document.getElementById('themeSelector').value;
+            userSettings.lang = document.getElementById('langSelector').value;
+            localStorage.setItem('krhorkos_settings', JSON.stringify(userSettings));
+            showToast('Ajustes guardados correctamente.');
+        }
+
         function changeTheme(themeName) {
-            state.theme = themeName;
+            userSettings.theme = themeName;
             document.documentElement.setAttribute('data-theme', themeName);
-            localStorage.setItem('krhorkos_theme', themeName);
-            showToast(`Tema cambiado a: ${themeName}`);
+            saveSettings();
         }
 
-        // --- MODALES Y NAVEGACIÓN ---
-        function togglePlansModal(show) {
-            document.getElementById('plansModal').style.display = show ? 'flex' : 'none';
-        }
-        function toggleSocialModal(show) {
-            document.getElementById('socialModal').style.display = show ? 'flex' : 'none';
-        }
-        function toggleSettingsModal(show) {
-            const sp = document.getElementById('settingsPanel');
-            sp.style.display = show && sp.style.display !== 'block' ? 'block' : 'none';
+        function toggleCheckerboard() {
+            userSettings.checkerboard = !userSettings.checkerboard;
+            document.getElementById('viewportWrapper').classList.toggle('checkerboard', userSettings.checkerboard);
+            saveSettings();
+            showToast(userSettings.checkerboard ? 'Fondo ajedrezado activado (Transparencia)' : 'Fondo blanco activado');
         }
 
-        document.getElementById('plansBtn').addEventListener('click', () => togglePlansModal(true));
-        document.getElementById('socialBtnModal').addEventListener('click', () => toggleSocialModal(true));
-
-        function activateProPlan() {
-            state.isPro = true;
-            localStorage.setItem('krhorkos_pro', 'true');
-            togglePlansModal(false);
-            showToast('¡Plan PRO activado con éxito! Marca de agua desactivada.');
-            redrawCanvas();
+        // --- PANTALLA DE BIENVENIDA Y MENÚ GODOT ---
+        function enterApp() {
+            document.getElementById('welcomeScreen').style.opacity = '0';
+            setTimeout(() => {
+                document.getElementById('welcomeScreen').style.display = 'none';
+                updateGodotSidebarUI();
+            }, 400);
         }
 
-        // --- ATAJOS DE TECLADO (Tecla 1 y Tecla 2) ---
+        function toggleGodotSidebar(show) {
+            const sb = document.getElementById('godotSidebar');
+            if (show) {
+                sb.classList.add('open');
+                updateGodotSidebarUI();
+            } else {
+                sb.classList.remove('open');
+            }
+        }
+
+        function updateGodotSidebarUI() {
+            const recList = document.getElementById('recentProjectsList');
+            recList.innerHTML = '';
+            projectsRecent.forEach(p => {
+                let div = document.createElement('div');
+                div.className = 'godot-item';
+                div.innerHTML = `<span>📁 ${p.name}</span> <span style="cursor:pointer;" onclick="moveToTrash(${p.id}, event)">🗑️</span>`;
+                div.onclick = () => { showToast(`Cargando ${p.name}...`); toggleGodotSidebar(false); };
+                recList.appendChild(div);
+            });
+
+            const trashList = document.getElementById('trashProjectsList');
+            trashList.innerHTML = '';
+            projectsTrash.forEach(p => {
+                let div = document.createElement('div');
+                div.className = 'godot-item';
+                div.innerHTML = `<span>🗑️ ${p.name}</span> <span style="font-size:0.75rem; color:var(--danger); cursor:pointer;" onclick="promptDeleteForever(${p.id}, event)">Eliminar Definitivo</span>`;
+                trashList.appendChild(div);
+            });
+            localStorage.setItem('krhorkos_recents', JSON.stringify(projectsRecent));
+            localStorage.setItem('krhorkos_trash', JSON.stringify(projectsTrash));
+        }
+
+        function moveToTrash(id, event) {
+            event.stopPropagation();
+            let idx = projectsRecent.findIndex(p => p.id === id);
+            if (idx !== -1) {
+                let item = projectsRecent.splice(idx, 1)[0];
+                projectsTrash.push(item);
+                updateGodotSidebarUI();
+                showToast('Proyecto enviado a la papelera (Sin advertencia)');
+            }
+        }
+
+        function promptDeleteForever(id, event) {
+            event.stopPropagation();
+            pendingDeleteId = id;
+            if (userSettings.dontAskAgainDelete) {
+                executeDeleteForever(true);
+            } else {
+                document.getElementById('confirmDeleteModal').style.display = 'flex';
+            }
+        }
+
+        function closeConfirmModal(confirmed) {
+            const check = document.getElementById('dontAskAgainCheck').checked;
+            if (check) userSettings.dontAskAgainDelete = true;
+            document.getElementById('confirmDeleteModal').style.display = 'none';
+            if (confirmed && pendingDeleteId !== null) {
+                executeDeleteForever(false);
+            }
+            pendingDeleteId = null;
+        }
+
+        function executeDeleteForever(silent) {
+            projectsTrash = projectsTrash.filter(p => p.id !== pendingDeleteId);
+            updateGodotSidebarUI();
+            showToast(silent ? 'Eliminado permanentemente (Aviso silenciado)' : 'Proyecto eliminado definitivamente');
+        }
+
+        // --- GESTIÓN DE MODALES GENERALES ---
+        function toggleModal(modalId, show) {
+            document.getElementById(modalId).style.display = show ? 'flex' : 'none';
+        }
+
+        // --- ATAJOS DE TECLADO Y MODOS AVANZADOS ---
         window.addEventListener('keydown', (e) => {
             if (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT') return;
 
-            if (e.key === '2') {
-                const sp = document.getElementById('settingsPanel');
-                sp.style.display = sp.style.display === 'block' ? 'none' : 'block';
-            }
-
-            if (e.key === '1' && state.selectedIndex !== null) {
-                // Activar o alternar modo vértices / deformación para la forma o imagen seleccionada
+            // Tecla TAB: Activa/Desactiva MODO EDICIÓN en la forma seleccionada
+            if (e.key === 'Tab') {
+                e.preventDefault();
+                if (state.selectedIndex === null) {
+                    showToast('Selecciona una forma o imagen primero para editar.');
+                    return;
+                }
+                state.isEditingMode = !state.isEditingMode;
                 let el = state.elements[state.selectedIndex];
-                el.showVertices = !el.showVertices;
-                
-                // Si se activan y no tienen vértices personalizados guardados, inicializarlos
+                el.showVertices = state.isEditingMode;
                 if (el.showVertices && !el.customVertices) {
-                    if (el.type === 'image' || el.type === 'rect' || el.type === 'rectangle') {
-                        el.customVertices = [
-                            {x: el.x, y: el.y},                     // Superior Izquierda
-                            {x: el.x + el.width, y: el.y},           // Superior Derecha
-                            {x: el.x + el.width, y: el.y + el.height}, // Inferior Derecha
-                            {x: el.x, y: el.y + el.height}           // Inferior Izquierda
-                        ];
-                    } else {
-                        // Para círculos, rombos, triángulos, estrellas (vértices por defecto alrededor de su caja)
-                        el.customVertices = [
-                            {x: el.x, y: el.y},
-                            {x: el.x + (el.width || el.radius*2), y: el.y},
-                            {x: el.x + (el.width || el.radius*2), y: el.y + (el.height || el.radius*2)},
-                            {x: el.x, y: el.y + (el.height || el.radius*2)}
-                        ];
-                    }
+                    initVerticesForElement(el);
                 }
                 redrawCanvas();
-                showToast(el.showVertices ? 'Modo vértices activado (Arrastra los puntos rojos)' : 'Modo vértices oculto');
+                showToast(state.isEditingMode ? 'MODO EDICIÓN ACTIVADO (Arrastra los puntos)' : 'Modo Edición desactivado');
             }
 
-            if (e.key === 'Delete' || e.key === 'Backspace') {
-                deleteSelected();
+            // Tecla 1: Incrementa puntos de edición
+            if (e.key === '1') {
+                state.vinylMultiplier = (state.vinylMultiplier || 4) + 2;
+                if (state.selectedIndex !== null) {
+                    let el = state.elements[state.selectedIndex];
+                    initVerticesForElement(el, state.vinylMultiplier);
+                    redrawCanvas();
+                }
+                showToast(`Puntos de edición incrementados (${state.vinylMultiplier || 4} puntos)`);
+            }
+
+            // Tecla 2: Activa MODO DIBUJO con ratón
+            if (e.key === '2') {
+                activateTool('draw');
+                showToast('MODO DIBUJO ACTIVADO: Dibuja con el ratón en la escena.');
+            }
+
+            // Tecla 3: Activa Herramienta de CURVAS
+            if (e.key === '3') {
+                activateTool('curve');
+                showToast('HERRAMIENTA CURVAS ACTIVADA: Haz múltiples clics para suavizar.');
+            }
+
+            // Ctrl + J: Fusionar formas
+            if (e.ctrlKey && e.key.toLowerCase() === 'j') {
+                e.preventDefault();
+                if (e.shiftKey || e.key === '-') {
+                    splitMergedShapes();
+                } else {
+                    mergeSelectedShapes();
+                }
+            }
+
+            // Ctrl + B: Mostrar atajos
+            if (e.ctrlKey && e.key.toLowerCase() === 'b') {
+                e.preventDefault();
+                toggleModal('shortcutsModal', true);
+            }
+
+            // Ctrl + S: Guardar proyecto
+            if (e.ctrlKey && e.key.toLowerCase() === 's') {
+                e.preventDefault();
+                saveCurrentProject();
+            }
+
+            // Ctrl + F1: Animaciones
+            if (e.ctrlKey && e.key === 'F1') {
+                e.preventDefault();
+                toggleModal('animationModal', true);
             }
         });
 
-        // --- GESTIÓN DE FORMAS Y CAPAS ---
-        function addShape(shapeType) {
+        function activateTool(toolName) {
+            state.activeTool = state.activeTool === toolName ? null : toolName;
+            ['btnFillHole', 'btnRefPoint', 'btnJoinPoints'].forEach(id => {
+                let btn = document.getElementById(id);
+                if(btn) btn.style.borderColor = 'var(--border-color)';
+            });
+            if (state.activeTool && document.getElementById('btn' + capitalize(state.activeTool))) {
+                document.getElementById('btn' + capitalize(state.activeTool)).style.borderColor = 'var(--accent)';
+            }
+            showToast(state.activeTool ? `Herramienta activa: ${state.activeTool}` : 'Herramienta desactivada');
+        }
+
+        function capitalize(s) { return s.charAt(0).toUpperCase() + s.slice(1); }
+
+        function initVerticesForElement(el, count = 4) {
+            let pts = [];
+            let w = el.width || 120, h = el.height || 120, x = el.x, y = el.y;
+            for (let i = 0; i < count; i++) {
+                let angle = (i / count) * Math.PI * 2;
+                pts.push({
+                    x: x + w/2 + Math.cos(angle) * (w/2),
+                    y: y + h/2 + Math.sin(angle) * (h/2)
+                });
+            }
+            el.customVertices = pts;
+        }
+
+        // --- BARRA DE FORMAS Y SELECCIÓN ---
+        function addShape(type) {
             let newEl = {
-                type: shapeType,
-                x: 100 + Math.random() * 50,
-                y: 100 + Math.random() * 50,
+                id: Date.now(),
+                name: `Forma_${state.elements.length + 1}`,
+                type: type,
+                x: 120 + Math.random() * 40,
+                y: 120 + Math.random() * 40,
                 width: 120,
                 height: 120,
                 radius: 60,
                 color: '#7928ca',
+                opacity: 1.0,
                 showVertices: false,
                 customVertices: null
             };
             state.elements.push(newEl);
             state.selectedIndex = state.elements.length - 1;
             redrawCanvas();
-            updateLayersUI();
+            updateSceneShapesUI();
         }
 
-        function addTextElement() {
-            const textVal = document.getElementById('textInput').value.trim();
-            if (!textVal) return;
+        function addRandomTerrain() {
+            let roughness = parseInt(document.getElementById('roughnessSlider').value);
+            let pts = [];
+            let cx = 250, cy = 250, count = 8 + Math.floor(roughness / 10);
+            for (let i = 0; i < count; i++) {
+                let angle = (i / count) * Math.PI * 2;
+                let r = 60 + Math.random() * (roughness * 1.2);
+                pts.push({ x: cx + Math.cos(angle) * r, y: cy + Math.sin(angle) * r });
+            }
             let newEl = {
-                type: 'text',
-                text: textVal,
-                x: 150,
-                y: 150,
-                size: 28,
-                color: getComputedStyle(document.documentElement).getPropertyValue('--text-main').trim()
+                id: Date.now(),
+                name: `Terreno_${state.elements.length + 1}`,
+                type: 'terrain',
+                x: 150, y: 150,
+                color: '#238636',
+                opacity: 1.0,
+                showVertices: true,
+                customVertices: pts
             };
             state.elements.push(newEl);
-            document.getElementById('textInput').value = '';
             state.selectedIndex = state.elements.length - 1;
             redrawCanvas();
-            updateLayersUI();
+            updateSceneShapesUI();
+            showToast('Forma irregular / terreno natural generada con éxito');
         }
 
-        // Cargar imagen local
-        document.getElementById('imageLoader').addEventListener('change', (e) => {
-            const file = e.target.files[0];
-            if (!file) return;
-            const reader = new FileReader();
-            reader.onload = function(event) {
-                const img = new Image();
-                img.onload = function() {
-                    let w = 200;
-                    let h = (img.height * 200) / img.width;
-                    let newEl = {
-                        type: 'image',
-                        imgObj: img,
-                        x: 80,
-                        y: 80,
-                        width: w,
-                        height: h,
-                        showVertices: false,
-                        customVertices: null
-                    };
-                    state.elements.push(newEl);
-                    state.selectedIndex = state.elements.length - 1;
-                    redrawCanvas();
-                    updateLayersUI();
-                }
-                img.src = event.target.result;
-            }
-            reader.readAsDataURL(file);
-        });
-
-        // --- MOTOR DE DIBUJO ---
-        function redrawCanvas() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-            state.elements.forEach((el, index) => {
-                ctx.save();
-                if (el.type === 'text') {
-                    ctx.font = `${el.size}px sans-serif`;
-                    ctx.fillStyle = el.color;
-                    ctx.fillText(el.text, el.x, el.y);
-                } else if (el.type === 'image') {
-                    if (el.customVertices && el.showVertices) {
-                        // Renderizado deformado poligonal por vértices para imágenes
-                        drawDeformedImage(el);
-                    } else {
-                        ctx.drawImage(el.imgObj, el.x, el.y, el.width, el.height);
-                    }
-                } else {
-                    drawGeometricShape(el);
-                }
-
-                // Si está seleccionado, mostrar contorno y puntos de vértices interactivos
-                if (index === state.selectedIndex) {
-                    ctx.strokeStyle = '#238636';
-                    ctx.lineWidth = 2;
-                    if (el.type !== 'text' && !el.showVertices) {
-                        ctx.strokeRect(el.x - 4, el.y - 4, (el.width || el.radius*2) + 8, (el.height || el.radius*2) + 8);
-                    }
-
-                    // Si tiene vértices activos, dibujarlos claramente en rojo para manipular
-                    if (el.showVertices && el.customVertices) {
-                        el.customVertices.forEach((v, vIdx) => {
-                            ctx.fillStyle = '#ff007f';
-                            ctx.fillRect(v.x - 5, v.y - 5, 10, 10);
-                            ctx.strokeStyle = '#ffffff';
-                            ctx.strokeRect(v.x - 5, v.y - 5, 10, 10);
-                        });
-                    }
-                }
-                ctx.restore();
-            });
-
-            // MARCA DE AGUA OBLIGATORIA (A menos que sea PRO)
-            if (!state.isPro) {
-                ctx.save();
-                ctx.font = 'bold 12px monospace';
-                ctx.fillStyle = 'rgba(120, 120, 120, 0.7)';
-                ctx.textAlign = 'right';
-                ctx.fillText('© 2026 Krhorkos3DStudioAnd2D', canvas.width - 15, canvas.height - 15);
-                ctx.restore();
-            }
-        }
-
-        function drawGeometricShape(el) {
-            ctx.fillStyle = el.color;
-            ctx.beginPath();
-            
-            // Si el usuario deformó los vértices, conectar los vértices personalizados directamente
-            if (el.showVertices && el.customVertices) {
-                ctx.moveTo(el.customVertices[0].x, el.customVertices[0].y);
-                for (let i = 1; i < el.customVertices.length; i++) {
-                    ctx.lineTo(el.customVertices[i].x, el.customVertices[i].y);
-                }
-                ctx.closePath();
-                ctx.fill();
-                return;
-            }
-
-            let w = el.width || 120;
-            let h = el.height || 120;
-            let x = el.x;
-            let y = el.y;
-
-            if (el.type === 'rect') {
-                ctx.fillRect(x, y, w, w);
-            } else if (el.type === 'rectangle') {
-                ctx.fillRect(x, y, w, h);
-            } else if (el.type === 'circle') {
-                ctx.arc(x + el.radius, y + el.radius, el.radius, 0, Math.PI * 2);
-                ctx.fill();
-            } else if (el.type === 'diamond') {
-                ctx.moveTo(x + w/2, y);
-                ctx.lineTo(x + w, y + h/2);
-                ctx.lineTo(x + w/2, y + h);
-                ctx.lineTo(x, y + h/2);
-                ctx.closePath();
-                ctx.fill();
-            } else if (el.type === 'triangle') {
-                ctx.moveTo(x + w/2, y);
-                ctx.lineTo(x + w, y + h);
-                ctx.lineTo(x, y + h);
-                ctx.closePath();
-                ctx.fill();
-            } else if (el.type === 'star') {
-                let cx = x + w/2, cy = y + h/2, spikes = 5, outerRadius = w/2, innerRadius = w/4;
-                let rot = Math.PI / 2 * 3;
-                let step = Math.PI / spikes;
-                ctx.beginPath();
-                ctx.moveTo(cx, cy - outerRadius);
-                for (let i = 0; i < spikes; i++) {
-                    let xCoord = cx + Math.cos(rot) * outerRadius;
-                    let yCoord = cy + Math.sin(rot) * outerRadius;
-                    ctx.lineTo(xCoord, yCoord);
-                    rot += step;
-                    xCoord = cx + Math.cos(rot) * innerRadius;
-                    yCoord = cy + Math.sin(rot) * innerRadius;
-                    ctx.lineTo(xCoord, yCoord);
-                    rot += step;
-                }
-                ctx.lineTo(cx, cy - outerRadius);
-                ctx.closePath();
-                ctx.fill();
-            }
-        }
-
-        // Renderizado aproximado de deformación de imagen mediante polígono envolvente
-        function drawDeformedImage(el) {
-            ctx.save();
-            let v = el.customVertices;
-            ctx.beginPath();
-            ctx.moveTo(v[0].x, v[0].y);
-            for (let i = 1; i < v.length; i++) {
-                ctx.lineTo(v[i].x, v[i].y);
-            }
-            ctx.closePath();
-            ctx.clip();
-            // Dibujar imagen rellenando los límites actuales del cuadro delimitador de sus vértices
-            let minX = Math.min(v[0].x, v[3].x);
-            let minY = Math.min(v[0].y, v[1].y);
-            let maxX = Math.max(v[1].x, v[2].x);
-            let maxY = Math.max(v[2].y, v[3].y);
-            ctx.drawImage(el.imgObj, minX, minY, Math.max(50, maxX - minX), Math.max(50, maxY - minY));
-            ctx.restore();
-        }
-
-        // --- GESTIÓN DE CAPAS UI ---
-        function updateLayersUI() {
-            const list = document.getElementById('layersList');
+        function updateSceneShapesUI() {
+            const list = document.getElementById('sceneShapesList');
             list.innerHTML = '';
             state.elements.forEach((el, idx) => {
-                const div = document.createElement('div');
-                div.className = `layer-item ${idx === state.selectedIndex ? 'active' : ''}`;
-                div.innerHTML = `<span>[Capa ${idx + 1}] ${el.type.toUpperCase()}</span>`;
+                let div = document.createElement('div');
+                div.className = `scene-shape-item ${idx === state.selectedIndex ? 'active' : ''}`;
+                div.innerHTML = `
+                    <input type="text" value="${el.name || el.type}" onchange="renameElement(${idx}, this.value)" onclick="event.stopPropagation()">
+                    <span style="font-size:0.7rem; color:var(--text-muted);">[${el.type}]</span>
+                `;
                 div.onclick = () => {
                     state.selectedIndex = idx;
                     redrawCanvas();
-                    updateLayersUI();
+                    updateSceneShapesUI();
                 };
                 list.appendChild(div);
             });
         }
 
-        function layerAction(action) {
-            if (state.selectedIndex === null) return;
-            let idx = state.selectedIndex;
-            let el = state.elements[idx];
+        function renameElement(idx, newName) {
+            state.elements[idx].name = newName;
+            showToast(`Renombrado a: ${newName}`);
+        }
 
-            if (action === 'front') {
-                state.elements.splice(idx, 1);
-                state.elements.push(el);
-                state.selectedIndex = state.elements.length - 1;
-            } else if (action === 'back') {
-                state.elements.splice(idx, 1);
-                state.elements.unshift(el);
-                state.selectedIndex = 0;
-            } else if (action === 'up' && idx < state.elements.length - 1) {
-                state.elements.splice(idx, 1);
-                state.elements.splice(idx + 1, 0, el);
-                state.selectedIndex = idx + 1;
-            } else if (action === 'down' && idx > 0) {
-                state.elements.splice(idx, 1);
-                state.elements.splice(idx - 1, 0, el);
-                state.selectedIndex = idx - 1;
+        function changeSelectedColor() {
+            if (state.selectedIndex === null) {
+                showToast('Selecciona una forma primero.');
+                return;
             }
+            let picker = document.getElementById('activeColorPicker');
+            picker.value = state.elements[state.selectedIndex].color || '#7928ca';
+            picker.click();
+        }
+
+        function applyColorToSelected(colorHex) {
+            if (state.selectedIndex !== null) {
+                state.elements[state.selectedIndex].color = colorHex;
+                redrawCanvas();
+            }
+        }
+
+        function changeSelectedOpacity() {
+            if (state.selectedIndex === null) {
+                showToast('Selecciona una forma primero.');
+                return;
+            }
+            let el = state.elements[state.selectedIndex];
+            el.opacity = el.opacity === 1.0 ? 0.5 : (el.opacity === 0.5 ? 0.2 : 1.0);
             redrawCanvas();
-            updateLayersUI();
+            showToast(`Opacidad ajustada a: ${Math.round(el.opacity * 100)}%`);
         }
 
         function deleteSelected() {
@@ -824,26 +1033,198 @@
             state.elements.splice(state.selectedIndex, 1);
             state.selectedIndex = state.elements.length > 0 ? 0 : null;
             redrawCanvas();
-            updateLayersUI();
-            showToast('Elemento borrado correctamente');
+            updateSceneShapesUI();
+            showToast('Elemento eliminado');
         }
 
-        // --- INTERACTIVIDAD RATÓN: ARRASTRE DE ELEMENTOS Y VÉRTICES DE DEFORMACIÓN ---
+        // --- HERRAMIENTAS DE RELLENO Y GEOMETRÍA ---
+        function autoFillAllShapes() {
+            state.elements.forEach(el => {
+                el.color = document.getElementById('activeColorPicker').value;
+            });
+            redrawCanvas();
+            showToast('Relleno automático aplicado a todas las formas cerradas');
+        }
+
+        function mergeSelectedShapes() {
+            if (state.elements.length < 2) {
+                showToast('Se necesitan al menos 2 formas en la escena para fusionar.');
+                return;
+            }
+            let mergedVertices = [];
+            state.elements.forEach(el => {
+                if (el.customVertices) {
+                    mergedVertices = mergedVertices.concat(el.customVertices);
+                } else {
+                    mergedVertices.push({x: el.x, y: el.y}, {x: (el.x + (el.width||100)), y: el.y + (el.height||100)});
+                }
+            });
+            let mergedEl = {
+                id: Date.now(),
+                name: 'Forma_Fusionada',
+                type: 'merged',
+                x: 100, y: 100,
+                color: '#7928ca',
+                opacity: 1.0,
+                showVertices: true,
+                customVertices: mergedVertices,
+                originalElements: [...state.elements]
+            };
+            state.elements = [mergedEl];
+            state.selectedIndex = 0;
+            redrawCanvas();
+            updateSceneShapesUI();
+            showToast('Formas fusionadas con éxito (Ctrl+J)');
+        }
+
+        function splitMergedShapes() {
+            let cur = state.elements[state.selectedIndex];
+            if (cur && cur.originalElements) {
+                state.elements = cur.originalElements;
+                state.selectedIndex = 0;
+                redrawCanvas();
+                updateSceneShapesUI();
+                showToast('Forma separada en sus elementos originales');
+            } else {
+                showToast('La forma seleccionada no es una fusión separable.');
+            }
+        }
+
+        // --- MOTOR DE DIBUJO Y CANVAS ---
+        function redrawCanvas() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Dibujar líneas y trazos libres o curvas
+            ctx.save();
+            ctx.strokeStyle = '#00ffff';
+            ctx.lineWidth = 2;
+            if (state.drawingPoints.length > 1) {
+                ctx.beginPath();
+                ctx.moveTo(state.drawingPoints[0].x, state.drawingPoints[0].y);
+                state.drawingPoints.forEach(p => ctx.lineTo(p.x, p.y));
+                ctx.stroke();
+            }
+            if (state.curvePoints.length > 1) {
+                ctx.beginPath();
+                ctx.moveTo(state.curvePoints[0].x, state.curvePoints[0].y);
+                for (let i = 1; i < state.curvePoints.length - 1; i++) {
+                    let xc = (state.curvePoints[i].x + state.curvePoints[i + 1].x) / 2;
+                    let yc = (state.curvePoints[i].y + state.curvePoints[i + 1].y) / 2;
+                    ctx.quadraticCurveTo(state.curvePoints[i].x, state.curvePoints[i].y, xc, yc);
+                }
+                ctx.stroke();
+            }
+
+            // Puntos de referencia y líneas unidas
+            state.refPoints.forEach(p => {
+                ctx.fillStyle = '#ff007f';
+                ctx.fillRect(p.x - 4, p.y - 4, 8, 8);
+            });
+            state.joinedLines.forEach(l => {
+                ctx.strokeStyle = '#238636';
+                ctx.beginPath();
+                ctx.moveTo(l.p1.x, l.p1.y);
+                ctx.lineTo(l.p2.x, l.p2.y);
+                ctx.stroke();
+            });
+            ctx.restore();
+
+            // Dibujar elementos de la escena
+            state.elements.forEach((el, index) => {
+                ctx.save();
+                ctx.globalAlpha = el.opacity !== undefined ? el.opacity : 1.0;
+
+                if (el.type === 'terrain' || el.type === 'merged' || (el.customVertices && el.showVertices)) {
+                    ctx.fillStyle = el.color;
+                    ctx.beginPath();
+                    let v = el.customVertices;
+                    ctx.moveTo(v[0].x, v[0].y);
+                    for (let i = 1; i < v.length; i++) ctx.lineTo(v[i].x, v[i].y);
+                    ctx.closePath();
+                    ctx.fill();
+                } else if (el.type === 'rect' || el.type === 'rectangle' || el.type === 'circle' || el.type === 'triangle') {
+                    ctx.fillStyle = el.color;
+                    ctx.beginPath();
+                    let w = el.width || 120, h = el.height || 120, x = el.x, y = el.y;
+                    if (el.type === 'circle') {
+                        ctx.arc(x + el.radius, y + el.radius, el.radius, 0, Math.PI * 2);
+                        ctx.fill();
+                    } else if (el.type === 'triangle') {
+                        ctx.moveTo(x + w/2, y); ctx.lineTo(x + w, y + h); ctx.lineTo(x, y + h); ctx.closePath(); ctx.fill();
+                    } else {
+                        ctx.fillRect(x, y, w, h);
+                    }
+                } else if (el.type === 'image' && el.imgObj) {
+                    ctx.drawImage(el.imgObj, el.x, el.y, el.width, el.height);
+                }
+                ctx.restore();
+
+                // Mostrar puntos de edición si está seleccionado y en modo edición
+                if (index === state.selectedIndex && el.showVertices && el.customVertices) {
+                    ctx.save();
+                    el.customVertices.forEach(v => {
+                        ctx.fillStyle = '#ff007f';
+                        ctx.fillRect(v.x - 5, v.y - 5, 10, 10);
+                        ctx.strokeStyle = '#ffffff';
+                        ctx.strokeRect(v.x - 5, v.y - 5, 10, 10);
+                    });
+                    ctx.restore();
+                }
+            });
+        }
+
+        // --- INTERACTIVIDAD RATÓN EN CANVAS ---
         canvas.addEventListener('mousedown', (e) => {
             const rect = canvas.getBoundingClientRect();
-            const scaleX = canvas.width / rect.width;
-            const scaleY = canvas.height / rect.height;
-            const mouseX = (e.clientX - rect.left) * scaleX;
-            const mouseY = (e.clientY - rect.top) * scaleY;
+            const mouseX = (e.clientX - rect.left) * (canvas.width / rect.width);
+            const mouseY = (e.clientY - rect.top) * (canvas.height / rect.height);
 
-            // 1. Revisar si se hizo clic en un vértice de deformación del elemento seleccionado actual
+            // Herramientas especiales
+            if (state.activeTool === 'refPoint') {
+                state.refPoints.push({ x: mouseX, y: mouseY });
+                redrawCanvas();
+                showToast('Punto de referencia colocado');
+                return;
+            }
+            if (state.activeTool === 'joinPoints') {
+                state.refPoints.push({ x: mouseX, y: mouseY });
+                if (state.refPoints.length >= 2) {
+                    let p1 = state.refPoints[state.refPoints.length - 2];
+                    let p2 = state.refPoints[state.refPoints.length - 1];
+                    state.joinedLines.push({ p1, p2 });
+                    redrawCanvas();
+                    showToast('Línea recta creada entre puntos');
+                }
+                return;
+            }
+            if (state.activeTool === 'fillHole') {
+                state.elements.push({
+                    id: Date.now(), name: 'Relleno_Hueco', type: 'circle',
+                    x: mouseX - 25, y: mouseY - 25, radius: 25, color: document.getElementById('activeColorPicker').value, opacity: 1.0
+                });
+                redrawCanvas();
+                updateSceneShapesUI();
+                showToast('Hueco rellenado');
+                return;
+            }
+            if (state.activeTool === 'curve') {
+                state.curvePoints.push({ x: mouseX, y: mouseY });
+                redrawCanvas();
+                return;
+            }
+            if (state.activeTool === 'draw') {
+                state.drawingPoints.push({ x: mouseX, y: mouseY });
+                redrawCanvas();
+                return;
+            }
+
+            // Comprobar vértices de edición activos
             if (state.selectedIndex !== null) {
                 let el = state.elements[state.selectedIndex];
                 if (el.showVertices && el.customVertices) {
                     for (let vIdx = 0; vIdx < el.customVertices.length; vIdx++) {
                         let v = el.customVertices[vIdx];
-                        let dist = Math.sqrt((mouseX - v.x)**2 + (mouseY - v.y)**2);
-                        if (dist <= 12) {
+                        if (Math.hypot(mouseX - v.x, mouseY - v.y) <= 12) {
                             state.draggingVertexIndex = vIdx;
                             state.dragging = true;
                             return;
@@ -852,62 +1233,52 @@
                 }
             }
 
-            // 2. Si no es un vértice, buscar elemento en escena de arriba hacia abajo para moverlo
+            // Arrastre normal de elementos
             state.selectedIndex = null;
             for (let i = state.elements.length - 1; i >= 0; i--) {
                 let el = state.elements[i];
                 let hit = false;
-                if (el.type === 'circle') {
-                    let dist = Math.sqrt((mouseX - (el.x + el.radius))**2 + (mouseY - (el.y + el.radius))**2);
-                    if (dist <= el.radius) hit = true;
-                } else if (el.type === 'text') {
-                    if (mouseX >= el.x && mouseX <= el.x + 120 && mouseY >= el.y - 25 && mouseY <= el.y) hit = true;
-                } else {
-                    let w = el.width || 120;
-                    let h = el.height || 120;
-                    if (mouseX >= el.x && mouseX <= el.x + w && mouseY >= el.y && mouseY <= el.y + h) hit = true;
-                }
+                let w = el.width || 120, h = el.height || 120;
+                if (el.type === 'circle' && Math.hypot(mouseX - (el.x + el.radius), mouseY - (el.y + el.radius)) <= el.radius) hit = true;
+                else if (mouseX >= el.x && mouseX <= el.x + w && mouseY >= el.y && mouseY <= el.y + h) hit = true;
 
                 if (hit) {
                     state.selectedIndex = i;
                     state.dragging = true;
-                    state.draggingVertexIndex = null;
                     state.startX = mouseX - el.x;
                     state.startY = mouseY - el.y;
                     break;
                 }
             }
             redrawCanvas();
-            updateLayersUI();
+            updateSceneShapesUI();
         });
 
         canvas.addEventListener('mousemove', (e) => {
-            if (!state.dragging || state.selectedIndex === null) return;
+            if (!state.dragging) return;
             const rect = canvas.getBoundingClientRect();
-            const scaleX = canvas.width / rect.width;
-            const scaleY = canvas.height / rect.height;
-            const mouseX = (e.clientX - rect.left) * scaleX;
-            const mouseY = (e.clientY - rect.top) * scaleY;
+            const mouseX = (e.clientX - rect.left) * (canvas.width / rect.width);
+            const mouseY = (e.clientY - rect.top) * (canvas.height / rect.height);
 
+            if (state.activeTool === 'draw') {
+                state.drawingPoints.push({ x: mouseX, y: mouseY });
+                redrawCanvas();
+                return;
+            }
+
+            if (state.selectedIndex === null) return;
             let el = state.elements[state.selectedIndex];
 
-            // Si estamos arrastrando un vértice específico de deformación
             if (state.draggingVertexIndex !== null && el.customVertices) {
                 el.customVertices[state.draggingVertexIndex].x = mouseX;
                 el.customVertices[state.draggingVertexIndex].y = mouseY;
             } else {
-                // Arrastrar el elemento completo
                 let dx = mouseX - el.x - state.startX;
                 let dy = mouseY - el.y - state.startY;
                 el.x = mouseX - state.startX;
                 el.y = mouseY - state.startY;
-
-                // Si tenía vértices personalizados activos, trasladarlos también con el elemento
                 if (el.customVertices) {
-                    el.customVertices.forEach(v => {
-                        v.x += dx;
-                        v.y += dy;
-                    });
+                    el.customVertices.forEach(v => { v.x += dx; v.y += dy; });
                 }
             }
             redrawCanvas();
@@ -918,30 +1289,93 @@
             state.draggingVertexIndex = null;
         });
 
-        // --- GUARDAR Y DESCARGAR ---
-        function saveProjectStorage() {
-            localStorage.setItem('krhorkos_project', JSON.stringify(state.elements));
-            showToast('¡Proyecto guardado localmente en el navegador!');
+        // --- ANIMACIÓN 2D Y CARGA DE FOTOGRAMAS ---
+        function loadAnimFrame(frameNum, event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const img = new Image();
+                img.onload = function() {
+                    if (frameNum === 1) animImages.frame1 = img;
+                    if (frameNum === 2) animImages.frame2 = img;
+                    showToast(`Fotograma ${frameNum} cargado correctamente.`);
+                }
+                img.src = e.target.result;
+            }
+            reader.readAsDataURL(file);
         }
+
+        function toggleAnimationPlayback() {
+            const container = document.getElementById('animPreviewContainer');
+            const btn = document.getElementById('playAnimBtn');
+            if (!animImages.frame1 || !animImages.frame2) {
+                showToast('Por favor carga el Fotograma 1 y el Fotograma 2 primero.');
+                return;
+            }
+
+            if (animImages.playing) {
+                clearInterval(animImages.interval);
+                animImages.playing = false;
+                btn.innerText = '▶ Reproducir Animación';
+            } else {
+                animImages.playing = true;
+                btn.innerText = '⏹ Detener Animación';
+                let toggle = false;
+                animImages.interval = setInterval(() => {
+                    container.innerHTML = '';
+                    let imgToDisplay = toggle ? animImages.frame2 : animImages.frame1;
+                    let clone = imgToDisplay.cloneNode();
+                    clone.style.maxHeight = '160px';
+                    clone.style.maxWidth = '100%';
+                    container.appendChild(clone);
+                    toggle = !toggle;
+                }, 500);
+            }
+        }
+
+        function saveCurrentProject() {
+            localStorage.setItem('krhorkos_saved_proj', JSON.stringify(state.elements));
+            showToast('💾 Proyecto guardado exitosamente.');
+        }
+
+        // Cargar imagen local al editor principal
+        document.getElementById('imageLoader').addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                const img = new Image();
+                img.onload = function() {
+                    let w = 200, h = (img.height * 200) / img.width;
+                    let newEl = {
+                        id: Date.now(),
+                        name: `Imagen_${state.elements.length + 1}`,
+                        type: 'image',
+                        imgObj: img,
+                        x: 100, y: 100,
+                        width: w, height: h,
+                        opacity: 1.0,
+                        showVertices: false,
+                        customVertices: null
+                    };
+                    state.elements.push(newEl);
+                    state.selectedIndex = state.elements.length - 1;
+                    redrawCanvas();
+                    updateSceneShapesUI();
+                    showToast('Imagen importada a la escena');
+                }
+                img.src = event.target.result;
+            }
+            reader.readAsDataURL(file);
+        });
 
         document.getElementById('downloadBtn').addEventListener('click', () => {
             const link = document.createElement('a');
-            link.download = 'krhorkos-diseño.png';
+            link.download = 'krhorkos-pro-output.png';
             link.href = canvas.toDataURL('image/png');
             link.click();
-            showToast('Imagen exportada con éxito');
-        });
-
-        // Cargar proyecto previo si existe
-        window.addEventListener('load', () => {
-            let saved = localStorage.getItem('krhorkos_project');
-            if (saved) {
-                try {
-                    state.elements = JSON.parse(saved);
-                    redrawCanvas();
-                    updateLayersUI();
-                } catch(err) { console.error(err); }
-            }
+            showToast('Imagen exportada correctamente');
         });
     </script>
 </body>
