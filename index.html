@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>KrhorkosImageEditor PRO</title>
+    <title>KrhorkosImageEditor PRO+</title>
     <style>
         /* --- TEMA Y VARIABLES --- */
         :root[data-theme="dark"] {
@@ -63,45 +63,77 @@
             transition: background 0.3s, color 0.3s;
         }
 
-        /* --- PANTALLA DE BIENVENIDA & MENÚ LATERAL ESTILO GODOT --- */
+        /* --- PANTALLA DE BIENVENIDA MODERNA Y REDES SOCIALES ABAJO A LA IZQUIERDA --- */
         #welcomeScreen {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: var(--bg-main);
+            background: radial-gradient(circle at center, var(--bg-secondary) 0%, var(--bg-main) 100%);
             z-index: 2000;
             display: flex;
-            flex-direction: column;
             justify-content: center;
             align-items: center;
             transition: opacity 0.4s ease;
         }
 
         .welcome-card {
-            background: var(--bg-panel);
+            background: rgba(24, 27, 34, 0.85);
+            backdrop-filter: blur(12px);
             border: 1px solid var(--border-color);
-            padding: 40px;
-            border-radius: 12px;
+            padding: 50px;
+            border-radius: 16px;
             text-align: center;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.6);
-            max-width: 500px;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.7);
+            max-width: 550px;
             width: 90%;
         }
 
         .welcome-card h1 {
-            font-size: 2rem;
-            margin-bottom: 10px;
-            background: linear-gradient(45deg, var(--primary-brand), var(--accent));
+            font-size: 2.2rem;
+            margin-bottom: 12px;
+            background: linear-gradient(135deg, var(--primary-brand), var(--accent));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
+            font-weight: 800;
         }
 
         .welcome-card p {
             color: var(--text-muted);
-            margin-bottom: 25px;
+            margin-bottom: 30px;
             font-size: 0.95rem;
+            line-height: 1.5;
         }
 
-        /* Panel lateral estilo Godot al entrar */
+        /* Enlaces de redes sociales en la parte inferior izquierda de la bienvenida */
+        .welcome-socials {
+            position: absolute;
+            bottom: 25px; left: 25px;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            z-index: 2005;
+        }
+
+        .social-badge {
+            background: var(--bg-panel);
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            padding: 8px 14px;
+            border-radius: 8px;
+            font-size: 0.78rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.2s;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+
+        .social-badge:hover {
+            background: var(--accent);
+            border-color: var(--accent);
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        /* --- MENÚ LATERAL ESTILO GODOT --- */
         #godotSidebar {
             position: fixed;
             top: 0; left: -320px; width: 320px; height: 100%;
@@ -145,7 +177,7 @@
             border: 1px solid var(--border-color);
             border-radius: 6px;
             margin-bottom: 8px;
-            font-size: 0.85rem;
+            font-size: 0.82rem;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -316,7 +348,6 @@
             padding: 30px;
         }
 
-        /* Patrón de fondo ajedrezado alternativo */
         .viewport-wrapper {
             position: relative;
             resize: both;
@@ -407,7 +438,6 @@
             cursor: pointer;
         }
 
-        /* Botones de atajos transparentes interactivos (Ctrl+B) */
         .shortcut-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
@@ -455,16 +485,23 @@
 </head>
 <body>
 
-    <!-- PANTALLA DE BIENVENIDA INICIAL -->
+    <!-- PANTALLA DE BIENVENIDA MODERNA -->
     <div id="welcomeScreen">
         <div class="welcome-card">
-            <h1>KrhorkosImageEditor PRO</h1>
-            <p>Herramienta avanzada de edición, dibujo vectorial, deformación por vértices y animación 2D.</p>
+            <h1>KrhorkosImageEditor </h1>
+            <p>Herramienta definitiva de dibujo vectorial, deformación por vértices, animación 2D y hojas de sprites.</p>
             <button class="btn" style="width: 100%; padding: 12px; font-size: 1rem;" onclick="enterApp()">🚀 Ingresar al Editor</button>
+        </div>
+        <!-- Enlaces de redes sociales abajo a la izquierda -->
+        <div class="welcome-socials">
+            <a href="https://www.instagram.com/krhorkos3dstudioand2d/" target="_blank" class="social-badge">📸 Instagram</a>
+            <a href="https://x.com/krhorkos3DAnd2D" target="_blank" class="social-badge">✖️ X (Twitter)</a>
+            <a href="https://www.youtube.com/@Krhorkos3DStudioAnd2D-b6g" target="_blank" class="social-badge">▶️ YouTube</a>
+            <a href="https://alex293517.itch.io/" target="_blank" class="social-badge">🎮 Itch.io</a>
         </div>
     </div>
 
-    <!-- MENÚ LATERAL ESTILO GODOT (Desplegable a la izquierda) -->
+    <!-- MENÚ LATERAL ESTILO GODOT -->
     <div id="godotSidebar">
         <div class="godot-header">
             <span style="font-weight: 700; font-size: 0.95rem;">📂 Menú de Proyectos</span>
@@ -484,7 +521,7 @@
         <div class="brand" onclick="toggleGodotSidebar(true)" title="Abrir Menú Godot">KrhorkosImageEditor ☰</div>
         <div class="header-actions">
             <button class="btn btn-secondary" onclick="toggleGodotSidebar(true)">📂 Proyectos / Papelera</button>
-            <button class="btn btn-secondary" onclick="toggleModal('animationModal', true)">🎬 Animaciones (Ctrl+F1)</button>
+            <button class="btn btn-secondary" onclick="toggleModal('animationModal', true)">🎬 Animaciones / Sprites (Ctrl+F1)</button>
             <button class="btn btn-secondary" onclick="toggleModal('shortcutsModal', true)">⌨️ Atajos (Ctrl+B)</button>
             <button class="btn btn-secondary" onclick="toggleModal('settingsModal', true)">⚙️ Ajustes</button>
             <button class="btn" id="downloadBtn">📥 Descargar</button>
@@ -526,20 +563,18 @@
                 </div>
                 <div class="shortcut-hint" style="font-size: 0.72rem; color: var(--text-muted); margin-top: 6px;">
                     • <b>Tecla 1</b>: Incrementar puntos de edición.<br>
-                    • <b>Tecla TAB</b>: Activar/desactivar Modo Edición en forma seleccionada.<br>
-                    • <b>Tecla 2</b>: Modo Dibujo (trazos libres con ratón).<br>
-                    • <b>Tecla 3</b>: Herramienta Curvas (clics continuos).
+                    • <b>Tecla TAB</b>: Activar/desactivar Modo Edición.<br>
+                    • <b>Tecla 2</b>: Modo Dibujo (trazo continuo con ratón/dedo).<br>
+                    • <b>Tecla 3</b>: Herramienta Curvas.
                 </div>
             </div>
 
-            <!-- 3. Herramientas Avanzadas y Rellenos -->
+            <!-- 3. Herramientas Avanzadas y Rellenos (Sin Puntos de Referencia) -->
             <div class="sidebar-section">
                 <h3>Rellenos y Geometría</h3>
                 <div class="grid-buttons">
                     <button class="btn btn-secondary" onclick="activateTool('fillHole')" id="btnFillHole">🪣 Rellenar Huecos</button>
                     <button class="btn btn-secondary" onclick="autoFillAllShapes()">⚡ Relleno Auto</button>
-                    <button class="btn btn-secondary" onclick="activateTool('refPoint')" id="btnRefPoint">📍 Puntos Ref.</button>
-                    <button class="btn btn-secondary" onclick="activateTool('joinPoints')" id="btnJoinPoints">🔗 Juntar Puntos</button>
                 </div>
                 <div class="control-group" style="margin-top: 10px;">
                     <label>Importar Imagen:</label>
@@ -557,7 +592,7 @@
             <div class="quick-shortcuts-bar">
                 <div><span>Tab:</span> Modo Ed</div>
                 <div><span>1:</span> Puntos+</div>
-                <div><span>2:</span> Dibujo</div>
+                <div><span>2:</span> Dibujo Táctil</div>
                 <div><span>3:</span> Curvas</div>
                 <div><span>Ctrl+J:</span> Fusionar</div>
                 <div><span>Ctrl+S:</span> Guardar</div>
@@ -578,8 +613,8 @@
                 <div class="shortcut-btn-card" title="Incrementa los puntos de control y edición de la figura.">
                     <strong>Tecla 1</strong> Incrementar Vértices
                 </div>
-                <div class="shortcut-btn-card" title="Activa el trazo libre con el ratón en el viewport.">
-                    <strong>Tecla 2</strong> Modo Dibujo Ratón
+                <div class="shortcut-btn-card" title="Activa el trazo continuo con ratón o toque directo.">
+                    <strong>Tecla 2</strong> Modo Dibujo / Táctil
                 </div>
                 <div class="shortcut-btn-card" title="Permite trazar curvas suaves mediante múltiples clics.">
                     <strong>Tecla 3</strong> Herramienta Curvas
@@ -593,33 +628,37 @@
                 <div class="shortcut-btn-card" title="Guarda el proyecto actual en el almacenamiento local automáticamente.">
                     <strong>Ctrl + S</strong> Guardar Proyecto
                 </div>
-                <div class="shortcut-btn-card" title="Abre el panel de animación 2D entre fotogramas.">
-                    <strong>Ctrl + F1</strong> Abrir Animaciones
+                <div class="shortcut-btn-card" title="Abre el panel de animación 2D y generador de hojas de sprites.">
+                    <strong>Ctrl + F1</strong> Abrir Animaciones / Sprites
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- MODAL DE ANIMACIONES (Ctrl + F1) -->
+    <!-- MODAL DE ANIMACIONES Y HOJA DE SPRITES (Ctrl + F1) -->
     <div class="modal-overlay" id="animationModal">
         <div class="modal-card">
             <button class="modal-close" onclick="toggleModal('animationModal', false)">✕</button>
-            <h2>Animación 2D por Fotogramas</h2>
-            <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 15px;">Selecciona imágenes para previsualizar una animación simple entre el Fotograma 1 y el Fotograma 2.</p>
+            <h2>Animación 2D y Hoja de Sprites</h2>
+            <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 15px;">Gestiona tus fotogramas, previsualiza la animación o combínalos en una hoja de sprites.</p>
             
-            <div class="control-group">
-                <label>Fotograma 1 (Imagen):</label>
-                <input type="file" id="animFrame1" accept="image/*" onchange="loadAnimFrame(1, event)">
+            <div id="animFramesContainer" style="max-height: 180px; overflow-y: auto; margin-bottom: 15px;">
+                <!-- Se inyecta dinámicamente, inicia con 1 espacio -->
             </div>
-            <div class="control-group" style="margin-top: 10px;">
-                <label>Fotograma 2 (Imagen):</label>
-                <input type="file" id="animFrame2" accept="image/*" onchange="loadAnimFrame(2, event)">
+
+            <div style="display: flex; gap: 8px; margin-bottom: 15px;">
+                <button class="btn btn-secondary" style="flex: 1;" onclick="addAnimationFrameSlot()">➕ Agregar fotograma</button>
+                <button class="btn" style="flex: 1;" onclick="toggleAnimationPlayback()" id="playAnimBtn">▶ Reproducir</button>
             </div>
-            <div style="margin-top: 15px; text-align: center;">
-                <button class="btn" onclick="toggleAnimationPlayback()" id="playAnimBtn">▶ Reproducir Animación</button>
+
+            <div class="control-group" style="border-top: 1px solid var(--border-color); padding-top: 15px;">
+                <label>Espaciado entre fotogramas para la hoja de sprites (Píxeles):</label>
+                <input type="number" id="spriteSpacingInput" value="10" min="0" max="50">
+                <button class="btn btn-secondary" style="width: 100%; margin-top: 8px;" onclick="downloadSpriteSheet()">📦 Descargar hoja de sprites</button>
             </div>
-            <div id="animPreviewContainer" style="margin-top: 15px; text-align: center; height: 180px; background: var(--bg-secondary); border-radius: 6px; display: flex; align-items: center; justify-content: center; overflow: hidden;">
-                <span style="color: var(--text-muted); font-size: 0.8rem;">Carga ambos fotogramas para animar</span>
+
+            <div id="animPreviewContainer" style="margin-top: 15px; text-align: center; height: 140px; background: var(--bg-secondary); border-radius: 6px; display: flex; align-items: center; justify-content: center; overflow: hidden;">
+                <span style="color: var(--text-muted); font-size: 0.8rem;">Previsualización de animación</span>
             </div>
         </div>
     </div>
@@ -684,11 +723,9 @@
         let state = {
             elements: [],
             selectedIndex: null,
-            activeTool: null, // 'fillHole', 'refPoint', 'joinPoints', 'draw', 'curve'
+            activeTool: null, // 'fillHole', 'draw', 'curve'
             drawingPoints: [],
             curvePoints: [],
-            refPoints: [],
-            joinedLines: [],
             vertexCountMultiplier: 4,
             isEditingMode: false,
             dragging: false,
@@ -704,7 +741,10 @@
 
         let projectsTrash = JSON.parse(localStorage.getItem('krhorkos_trash')) || [];
         let pendingDeleteId = null;
-        let animImages = { frame1: null, frame2: null, playing: false, interval: null };
+
+        // Sistema de fotogramas dinámicos (Empieza con 1)
+        let animFramesData = [null];
+        let animPlayback = { playing: false, interval: null };
 
         const canvas = document.getElementById('mainCanvas');
         const ctx = canvas.getContext('2d');
@@ -750,6 +790,7 @@
             setTimeout(() => {
                 document.getElementById('welcomeScreen').style.display = 'none';
                 updateGodotSidebarUI();
+                renderAnimFramesUI();
             }, 400);
         }
 
@@ -832,7 +873,7 @@
         window.addEventListener('keydown', (e) => {
             if (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT') return;
 
-            // Tecla TAB: Activa/Desactiva MODO EDICIÓN en la forma seleccionada
+            // Tecla TAB: MODO EDICIÓN
             if (e.key === 'Tab') {
                 e.preventDefault();
                 if (state.selectedIndex === null) {
@@ -846,10 +887,10 @@
                     initVerticesForElement(el);
                 }
                 redrawCanvas();
-                showToast(state.isEditingMode ? 'MODO EDICIÓN ACTIVADO (Arrastra los puntos)' : 'Modo Edición desactivado');
+                showToast(state.isEditingMode ? 'MODO EDICIÓN ACTIVADO' : 'Modo Edición desactivado');
             }
 
-            // Tecla 1: Incrementa puntos de edición
+            // Tecla 1: Incrementar vértices
             if (e.key === '1') {
                 state.vinylMultiplier = (state.vinylMultiplier || 4) + 2;
                 if (state.selectedIndex !== null) {
@@ -857,19 +898,19 @@
                     initVerticesForElement(el, state.vinylMultiplier);
                     redrawCanvas();
                 }
-                showToast(`Puntos de edición incrementados (${state.vinylMultiplier || 4} puntos)`);
+                showToast(`Puntos de edición incrementados (${state.vinylMultiplier} puntos)`);
             }
 
-            // Tecla 2: Activa MODO DIBUJO con ratón
+            // Tecla 2: Modo Dibujo continuo con ratón/táctil
             if (e.key === '2') {
                 activateTool('draw');
-                showToast('MODO DIBUJO ACTIVADO: Dibuja con el ratón en la escena.');
+                showToast('MODO DIBUJO / TÁCTIL ACTIVADO: Arrastra el cursor o dedo libremente.');
             }
 
-            // Tecla 3: Activa Herramienta de CURVAS
+            // Tecla 3: Herramienta Curvas
             if (e.key === '3') {
                 activateTool('curve');
-                showToast('HERRAMIENTA CURVAS ACTIVADA: Haz múltiples clics para suavizar.');
+                showToast('HERRAMIENTA CURVAS ACTIVADA');
             }
 
             // Ctrl + J: Fusionar formas
@@ -888,13 +929,13 @@
                 toggleModal('shortcutsModal', true);
             }
 
-            // Ctrl + S: Guardar proyecto
+            // Ctrl + S: Guardar
             if (e.ctrlKey && e.key.toLowerCase() === 's') {
                 e.preventDefault();
                 saveCurrentProject();
             }
 
-            // Ctrl + F1: Animaciones
+            // Ctrl + F1: Animaciones y Sprites
             if (e.ctrlKey && e.key === 'F1') {
                 e.preventDefault();
                 toggleModal('animationModal', true);
@@ -903,17 +944,15 @@
 
         function activateTool(toolName) {
             state.activeTool = state.activeTool === toolName ? null : toolName;
-            ['btnFillHole', 'btnRefPoint', 'btnJoinPoints'].forEach(id => {
+            ['btnFillHole'].forEach(id => {
                 let btn = document.getElementById(id);
                 if(btn) btn.style.borderColor = 'var(--border-color)';
             });
-            if (state.activeTool && document.getElementById('btn' + capitalize(state.activeTool))) {
-                document.getElementById('btn' + capitalize(state.activeTool)).style.borderColor = 'var(--accent)';
+            if (state.activeTool === 'fillHole') {
+                document.getElementById('btnFillHole').style.borderColor = 'var(--accent)';
             }
             showToast(state.activeTool ? `Herramienta activa: ${state.activeTool}` : 'Herramienta desactivada');
         }
-
-        function capitalize(s) { return s.charAt(0).toUpperCase() + s.slice(1); }
 
         function initVerticesForElement(el, count = 4) {
             let pts = [];
@@ -973,7 +1012,7 @@
             state.selectedIndex = state.elements.length - 1;
             redrawCanvas();
             updateSceneShapesUI();
-            showToast('Forma irregular / terreno natural generada con éxito');
+            showToast('Forma irregular / terreno natural generada');
         }
 
         function updateSceneShapesUI() {
@@ -1037,13 +1076,42 @@
             showToast('Elemento eliminado');
         }
 
-        // --- HERRAMIENTAS DE RELLENO Y GEOMETRÍA ---
-        function autoFillAllShapes() {
+        // --- RELLENAR HUECOS CORREGIDO (RELLENA TODA LA FORMA DE PUNTA A PUNTA) ---
+        function fillCompleteShapeAt(mouseX, mouseY) {
+            let activeColor = document.getElementById('activeColorPicker').value;
+            let filledCount = 0;
             state.elements.forEach(el => {
-                el.color = document.getElementById('activeColorPicker').value;
+                let hit = false;
+                let w = el.width || 120, h = el.height || 120;
+                if (el.type === 'circle' && Math.hypot(mouseX - (el.x + el.radius), mouseY - (el.y + el.radius)) <= el.radius) {
+                    hit = true;
+                } else if (mouseX >= el.x && mouseX <= el.x + w && mouseY >= el.y && mouseY <= el.y + h) {
+                    hit = true;
+                } else if (el.customVertices) {
+                    // Verificación simple por bounding box o polígono
+                    let minX = Math.min(...el.customVertices.map(v => v.x));
+                    let maxX = Math.max(...el.customVertices.map(v => v.x));
+                    let minY = Math.min(...el.customVertices.map(v => v.y));
+                    let maxY = Math.max(...el.customVertices.map(v => v.y));
+                    if (mouseX >= minX && mouseX <= maxX && mouseY >= minY && mouseY <= maxY) hit = true;
+                }
+
+                if (hit) {
+                    el.color = activeColor;
+                    filledCount++;
+                }
             });
+            if (filledCount > 0) {
+                redrawCanvas();
+                showToast('¡Forma completa rellenada de punta a punta!');
+            }
+        }
+
+        function autoFillAllShapes() {
+            let activeColor = document.getElementById('activeColorPicker').value;
+            state.elements.forEach(el => { el.color = activeColor; });
             redrawCanvas();
-            showToast('Relleno automático aplicado a todas las formas cerradas');
+            showToast('Relleno automático aplicado a todas las formas');
         }
 
         function mergeSelectedShapes() {
@@ -1094,7 +1162,7 @@
         function redrawCanvas() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-            // Dibujar líneas y trazos libres o curvas
+            // Dibujar trazos continuos o curvas libres
             ctx.save();
             ctx.strokeStyle = '#00ffff';
             ctx.lineWidth = 2;
@@ -1114,19 +1182,6 @@
                 }
                 ctx.stroke();
             }
-
-            // Puntos de referencia y líneas unidas
-            state.refPoints.forEach(p => {
-                ctx.fillStyle = '#ff007f';
-                ctx.fillRect(p.x - 4, p.y - 4, 8, 8);
-            });
-            state.joinedLines.forEach(l => {
-                ctx.strokeStyle = '#238636';
-                ctx.beginPath();
-                ctx.moveTo(l.p1.x, l.p1.y);
-                ctx.lineTo(l.p2.x, l.p2.y);
-                ctx.stroke();
-            });
             ctx.restore();
 
             // Dibujar elementos de la escena
@@ -1159,7 +1214,6 @@
                 }
                 ctx.restore();
 
-                // Mostrar puntos de edición si está seleccionado y en modo edición
                 if (index === state.selectedIndex && el.showVertices && el.customVertices) {
                     ctx.save();
                     el.customVertices.forEach(v => {
@@ -1173,38 +1227,19 @@
             });
         }
 
-        // --- INTERACTIVIDAD RATÓN EN CANVAS ---
-        canvas.addEventListener('mousedown', (e) => {
-            const rect = canvas.getBoundingClientRect();
-            const mouseX = (e.clientX - rect.left) * (canvas.width / rect.width);
-            const mouseY = (e.clientY - rect.top) * (canvas.height / rect.height);
+        // --- INTERACTIVIDAD RATÓN Y TÁCTIL (Mousedown, Drag, Touch) ---
+        canvas.addEventListener('mousedown', (e) => handleStart(e.clientX, e.clientY));
+        canvas.addEventListener('touchstart', (e) => {
+            if(e.touches.length > 0) handleStart(e.touches[0].clientX, e.touches[0].clientY);
+        });
 
-            // Herramientas especiales
-            if (state.activeTool === 'refPoint') {
-                state.refPoints.push({ x: mouseX, y: mouseY });
-                redrawCanvas();
-                showToast('Punto de referencia colocado');
-                return;
-            }
-            if (state.activeTool === 'joinPoints') {
-                state.refPoints.push({ x: mouseX, y: mouseY });
-                if (state.refPoints.length >= 2) {
-                    let p1 = state.refPoints[state.refPoints.length - 2];
-                    let p2 = state.refPoints[state.refPoints.length - 1];
-                    state.joinedLines.push({ p1, p2 });
-                    redrawCanvas();
-                    showToast('Línea recta creada entre puntos');
-                }
-                return;
-            }
+        function handleStart(clientX, clientY) {
+            const rect = canvas.getBoundingClientRect();
+            const mouseX = (clientX - rect.left) * (canvas.width / rect.width);
+            const mouseY = (clientY - rect.top) * (canvas.height / rect.height);
+
             if (state.activeTool === 'fillHole') {
-                state.elements.push({
-                    id: Date.now(), name: 'Relleno_Hueco', type: 'circle',
-                    x: mouseX - 25, y: mouseY - 25, radius: 25, color: document.getElementById('activeColorPicker').value, opacity: 1.0
-                });
-                redrawCanvas();
-                updateSceneShapesUI();
-                showToast('Hueco rellenado');
+                fillCompleteShapeAt(mouseX, mouseY);
                 return;
             }
             if (state.activeTool === 'curve') {
@@ -1214,11 +1249,11 @@
             }
             if (state.activeTool === 'draw') {
                 state.drawingPoints.push({ x: mouseX, y: mouseY });
-                redrawCanvas();
+                state.dragging = true;
                 return;
             }
 
-            // Comprobar vértices de edición activos
+            // Comprobar vértices activos
             if (state.selectedIndex !== null) {
                 let el = state.elements[state.selectedIndex];
                 if (el.showVertices && el.customVertices) {
@@ -1233,7 +1268,7 @@
                 }
             }
 
-            // Arrastre normal de elementos
+            // Seleccionar y mover elementos
             state.selectedIndex = null;
             for (let i = state.elements.length - 1; i >= 0; i--) {
                 let el = state.elements[i];
@@ -1252,14 +1287,20 @@
             }
             redrawCanvas();
             updateSceneShapesUI();
+        }
+
+        window.addEventListener('mousemove', (e) => handleMove(e.clientX, e.clientY));
+        window.addEventListener('touchmove', (e) => {
+            if(e.touches.length > 0) handleMove(e.touches[0].clientX, e.touches[0].clientY);
         });
 
-        canvas.addEventListener('mousemove', (e) => {
+        function handleMove(clientX, clientY) {
             if (!state.dragging) return;
             const rect = canvas.getBoundingClientRect();
-            const mouseX = (e.clientX - rect.left) * (canvas.width / rect.width);
-            const mouseY = (e.clientY - rect.top) * (canvas.height / rect.height);
+            const mouseX = (clientX - rect.left) * (canvas.width / rect.width);
+            const mouseY = (clientY - rect.top) * (canvas.height / rect.height);
 
+            // Si está activa la herramienta de dibujo, traza en tiempo real sin soltar
             if (state.activeTool === 'draw') {
                 state.drawingPoints.push({ x: mouseX, y: mouseY });
                 redrawCanvas();
@@ -1282,24 +1323,42 @@
                 }
             }
             redrawCanvas();
-        });
+        }
 
-        window.addEventListener('mouseup', () => {
-            state.dragging = false;
-            state.draggingVertexIndex = null;
-        });
+        window.addEventListener('mouseup', () => { state.dragging = false; state.draggingVertexIndex = null; });
+        window.addEventListener('touchend', () => { state.dragging = false; state.draggingVertexIndex = null; });
 
-        // --- ANIMACIÓN 2D Y CARGA DE FOTOGRAMAS ---
-        function loadAnimFrame(frameNum, event) {
+        // --- SISTEMA DE FOTOGRAMAS / ANIMACIÓN Y HOJA DE SPRITES ---
+        function renderAnimFramesUI() {
+            const container = document.getElementById('animFramesContainer');
+            container.innerHTML = '';
+            animFramesData.forEach((img, idx) => {
+                let div = document.createElement('div');
+                div.className = 'control-group';
+                div.style.marginBottom = '8px';
+                div.innerHTML = `
+                    <label>Fotograma ${idx + 1}:</label>
+                    <input type="file" accept="image/*" onchange="loadAnimFrameSlot(${idx}, event)">
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        function addAnimationFrameSlot() {
+            animFramesData.push(null);
+            renderAnimFramesUI();
+            showToast('Nuevo espacio de fotograma añadido');
+        }
+
+        function loadAnimFrameSlot(idx, event) {
             const file = event.target.files[0];
             if (!file) return;
             const reader = new FileReader();
             reader.onload = function(e) {
                 const img = new Image();
                 img.onload = function() {
-                    if (frameNum === 1) animImages.frame1 = img;
-                    if (frameNum === 2) animImages.frame2 = img;
-                    showToast(`Fotograma ${frameNum} cargado correctamente.`);
+                    animFramesData[idx] = img;
+                    showToast(`Fotograma ${idx + 1} cargado correctamente.`);
                 }
                 img.src = e.target.result;
             }
@@ -1309,29 +1368,60 @@
         function toggleAnimationPlayback() {
             const container = document.getElementById('animPreviewContainer');
             const btn = document.getElementById('playAnimBtn');
-            if (!animImages.frame1 || !animImages.frame2) {
-                showToast('Por favor carga el Fotograma 1 y el Fotograma 2 primero.');
+            let validFrames = animFramesData.filter(img => img !== null);
+            if (validFrames.length === 0) {
+                showToast('Carga al menos un fotograma válido primero.');
                 return;
             }
 
-            if (animImages.playing) {
-                clearInterval(animImages.interval);
-                animImages.playing = false;
-                btn.innerText = '▶ Reproducir Animación';
+            if (animPlayback.playing) {
+                clearInterval(animPlayback.interval);
+                animPlayback.playing = false;
+                btn.innerText = '▶ Reproducir';
             } else {
-                animImages.playing = true;
-                btn.innerText = '⏹ Detener Animación';
-                let toggle = false;
-                animImages.interval = setInterval(() => {
+                animPlayback.playing = true;
+                btn.innerText = '⏹ Detener';
+                let curIdx = 0;
+                animPlayback.interval = setInterval(() => {
                     container.innerHTML = '';
-                    let imgToDisplay = toggle ? animImages.frame2 : animImages.frame1;
+                    let imgToDisplay = validFrames[curIdx % validFrames.length];
                     let clone = imgToDisplay.cloneNode();
-                    clone.style.maxHeight = '160px';
+                    clone.style.maxHeight = '120px';
                     clone.style.maxWidth = '100%';
                     container.appendChild(clone);
-                    toggle = !toggle;
-                }, 500);
+                    curIdx++;
+                }, 400);
             }
+        }
+
+        function downloadSpriteSheet() {
+            let validFrames = animFramesData.filter(img => img !== null);
+            if (validFrames.length === 0) {
+                showToast('No hay fotogramas cargados para crear la hoja de sprites.');
+                return;
+            }
+            let spacing = parseInt(document.getElementById('spriteSpacingInput').value) || 0;
+            
+            // Calcular dimensiones de la hoja de sprites horizontal
+            let totalWidth = validFrames.reduce((sum, img) => sum + img.width, 0) + (spacing * (validFrames.length - 1));
+            let maxHeight = Math.max(...validFrames.map(img => img.height));
+
+            let tempCanvas = document.createElement('canvas');
+            tempCanvas.width = totalWidth;
+            tempCanvas.height = maxHeight;
+            let tCtx = tempCanvas.getContext('2d');
+
+            let currentX = 0;
+            validFrames.forEach(img => {
+                tCtx.drawImage(img, currentX, 0);
+                currentX += img.width + spacing;
+            });
+
+            const link = document.createElement('a');
+            link.download = 'krhorkos-spritesheet.png';
+            link.href = tempCanvas.toDataURL('image/png');
+            link.click();
+            showToast('Hoja de sprites descargada con éxito');
         }
 
         function saveCurrentProject() {
